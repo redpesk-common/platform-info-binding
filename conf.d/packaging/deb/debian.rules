@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	bash /etc/profile.d/AGL-app-framework-binder.sh
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DCMAKE_INSTALL_PREFIX=/opt/AGL/afm/applications/
+
+override_dh_auto_install:
+	dh_auto_install --destdir=/usr/src/packages/BUILD/debian/tmp

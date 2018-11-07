@@ -1,0 +1,50 @@
+{
+  "afbidl": "0.0",
+  "info": {
+    "description": "Provide platform information to other bindings",
+    "title": "agl-service-platform-info",
+    "version": "1.0"
+  },
+  "c-generator": {
+    "version": 3,
+    "prefix": "afv_",
+    "postfix": "",
+    "preinit": null,
+    "init": "init",
+    "onevent": null,
+    "scope": "static",
+    "private": true
+  },
+  "api": {
+    "name": "platform-info",
+    "verbs": {
+      "get": {
+        "description": "Get a platform data.",
+        "permissions": { "session": "check" },
+        "request": { "$ref": "#/schemas/get-request" },
+        "reply": { "$ref": "#/schemas/any" }
+      },
+      "subscribe": {
+        "description": "Subscribe to changes (hotplug event, failures, ...)"
+      },
+      "unsubscribe": {
+        "description": "Unsubscribe to changes (hotplug event, failures, ...)"
+      }
+    }
+  },
+  "schemas": {
+    "any": {
+      "title": "Any value",
+      "type": [ "null", "boolean", "object", "array", "number", "string" ]
+    },
+    "get-request": {
+      "type": "object",
+      "properties": {
+        "oneOf": [
+          { "type": "string"},
+          { "type": "array", "items": { "type": "string"} }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+    "id": "http://iot.bzh/download/public/schema/json/ctl-schema.json#",
+    "$schema": "http://iot.bzh/download/public/schema/json/ctl-schema.json#",
+    "metadata": {
+        "uid": "OS Info binding Test",
+        "version": "1.0",
+        "api": "aft-os-info",
+        "info": "AFB-test binding configuration file to test os-info api.",
+        "require": [
+            "os-info"
+        ]
+    },
+    "testVerb": {
+        "uid": "short",
+        "info": "Launch the basic API tests",
+        "action": "lua://AFT#_launch_test",
+        "args": {
+            "trace": "os-info",
+            "files": "aft-BasicAPITests.lua"
+        }
+    }
+}
+

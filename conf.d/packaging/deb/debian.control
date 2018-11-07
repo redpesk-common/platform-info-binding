@@ -1,0 +1,19 @@
+Priority: optional
+Maintainer: Iot-Team <secretaria@iot.bzh>
+Source: agl-service-os-info
+Build-Depends: debhelper (>= 5),
+ pkg-config,
+ cmake,
+ gcc,
+ g++,
+ libjson-c-dev ,
+ libsystemd-dev  (>= 222),
+ agl-app-framework-binder-dev ,
+ agl-libmicrohttpd-dev  (>= 0.9.55)
+Standards-Version: 3.8.2
+Homepage: https://github.com/iotbzh/agl-service-os-info
+
+Package: agl-service-os-info
+Section: libs
+Architecture: any
+Description: Provide an AGL OS information Binding
