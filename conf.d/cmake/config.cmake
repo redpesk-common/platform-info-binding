@@ -18,7 +18,7 @@
 
 # Project Info
 # ------------------
-set(PROJECT_NAME "Platform-info_binding")
+set(PROJECT_NAME "agl-service-platform-info")
 set(PROJECT_VERSION 6.90)
 set(API_NAME platform-info)
 set(PROJECT_PRETTY_NAME "Platform Information provider binding")
