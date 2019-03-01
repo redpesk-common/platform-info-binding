@@ -59,7 +59,9 @@ package: build
 	@mkdir -p ${BUILD_DIR}/$@/htdocs
 	@mkdir -p ${BUILD_DIR}/$@/var
 	@cmake --build ${BUILD_DIR} ${PACKAGE_ARGS} --target widget
-	@mkdir -p ${DEST} && cp ${BUILD_DIR}/*.wgt ${DEST}
+	@if [ "${DEST}" != "${BUILD_DIR}" ]; then \
+		mkdir -p ${DEST} && cp ${BUILD_DIR}/*.wgt ${DEST}; \
+	fi
 
 package-test: build
 	@mkdir -p ${BUILD_DIR}/$@/bin
@@ -69,7 +71,9 @@ package-test: build
 	@mkdir -p ${BUILD_DIR}/$@/var
 	@cmake --build ${BUILD_DIR} ${PACKAGE_ARGS} --target widget
 	@cmake --build ${BUILD_DIR} ${PACKAGE_ARGS} --target test_widget
-	@mkdir -p ${DEST} && cp ${BUILD_DIR}/*.wgt ${DEST}
+	@if [ "${DEST}" != "${BUILD_DIR}" ]; then \
+		mkdir -p ${DEST} && cp ${BUILD_DIR}/*.wgt ${DEST}; \
+	fi
 
 install: build
 	@cmake --build ${BUILD_DIR} ${INSTALL_ARGS} --target install
