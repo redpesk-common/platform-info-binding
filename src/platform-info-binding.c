@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2018 "IoT.bzh"
+ * Copyright (C) 2016-2019 "IoT.bzh"
  *
  * Author "Romain Forlot" <romain.forlot@iot.bzh>
  *
@@ -86,7 +86,12 @@ void afv_subscribe(afb_req_t req) {
 
 int init(afb_api_t api) {
 	struct dirent* dir_ent = NULL;
+
 	DIR* dir_handle = opendir(PLATFORM_INFO_DIR);
+	if (! dir_handle) {
+		AFB_ERROR("The directory %s does not exist.", PLATFORM_INFO_DIR);
+		return -1;
+	}
 	json_object *json_file = json_object_new_object(), *current_file = NULL;
 
 	while( (dir_ent = readdir(dir_handle)) != NULL) {
