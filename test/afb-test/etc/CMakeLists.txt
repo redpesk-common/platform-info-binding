@@ -1,5 +1,5 @@
 ###########################################################################
-# Copyright 2015 - 2019 IoT.bzh
+# Copyright 2019 IoT.bzh
 #
 # author:Frédéric Marec <frederic.marec@iot.bzh>
 #
@@ -16,12 +16,16 @@
 # limitations under the License.
 ###########################################################################
 
+##################################################
+# Platform-info test configuration files
+##################################################
+PROJECT_TARGET_ADD(afb-test-config)
 
-# Include any directory not starting with _
-# -----------------------------------------------------
-PROJECT_SUBDIRS_ADD(${PROJECT_SRC_DIR_PATTERN})
+	file(GLOB CONF_FILES "*.json")
 
-ADD_TEST(NAME PLATFORM-INFO_TESTS
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	COMMAND afm-test ${CMAKE_BINARY_DIR}/package ${CMAKE_BINARY_DIR}/package-test
-)
+	add_input_files("${CONF_FILES}")
+
+	SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
+	LABELS "TEST-CONFIG"
+	OUTPUT_NAME ${TARGET_NAME}
+	)

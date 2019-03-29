@@ -4,10 +4,10 @@
     "metadata": {
         "uid": "OS Info binding Test",
         "version": "1.0",
-        "api": "aft-os-info",
-        "info": "AFB-test binding configuration file to test os-info api.",
+        "api": "aft-platform-info",
+        "info": "AFB-test binding configuration file to test platform-info api.",
         "require": [
-            "os-info"
+            "platform-info"
         ]
     },
     "testVerb": {
@@ -15,7 +15,7 @@
         "info": "Launch the basic API tests",
         "action": "lua://AFT#_launch_test",
         "args": {
-            "trace": "os-info",
+            "trace": "platform-info",
             "files": "aft-BasicAPITests.lua"
         }
     }

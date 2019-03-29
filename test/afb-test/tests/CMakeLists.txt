@@ -1,5 +1,5 @@
 ###########################################################################
-# Copyright 2015 - 2019 IoT.bzh
+# Copyright 2019 IoT.bzh
 #
 # author:Frédéric Marec <frederic.marec@iot.bzh>
 #
@@ -17,11 +17,15 @@
 ###########################################################################
 
 
-# Include any directory not starting with _
-# -----------------------------------------------------
-PROJECT_SUBDIRS_ADD(${PROJECT_SRC_DIR_PATTERN})
+##################################################
+# Platform-info Lua Scripts
+##################################################
+PROJECT_TARGET_ADD(test-files)
 
-ADD_TEST(NAME PLATFORM-INFO_TESTS
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	COMMAND afm-test ${CMAKE_BINARY_DIR}/package ${CMAKE_BINARY_DIR}/package-test
-)
+	file(GLOB LUA_FILES "*.lua")
+	add_input_files("${LUA_FILES}")
+
+	SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
+	LABELS "TEST-DATA"
+	OUTPUT_NAME ${TARGET_NAME}
+	)

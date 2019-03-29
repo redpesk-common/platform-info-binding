@@ -1,5 +1,5 @@
 ###########################################################################
-# Copyright 2015 - 2019 IoT.bzh
+# Copyright 2019 IoT.bzh
 #
 # author:Frédéric Marec <frederic.marec@iot.bzh>
 #
@@ -20,8 +20,3 @@
 # Include any directory not starting with _
 # -----------------------------------------------------
 PROJECT_SUBDIRS_ADD(${PROJECT_SRC_DIR_PATTERN})
-
-ADD_TEST(NAME PLATFORM-INFO_TESTS
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	COMMAND afm-test ${CMAKE_BINARY_DIR}/package ${CMAKE_BINARY_DIR}/package-test
-)
