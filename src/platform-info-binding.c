@@ -56,7 +56,7 @@ void afv_get(afb_req_t req) {
 			return;
 	}
 
-	afb_req_success(req, result, NULL);
+	afb_req_success(req, json_object_get(result), NULL);
 }
 
 void afv_set(afb_req_t req) {
