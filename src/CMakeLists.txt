@@ -26,8 +26,3 @@ PROJECT_TARGET_ADD(platform-info)
         LABELS "BINDING"
         OUTPUT_NAME ${TARGET_NAME}
     )
-
-    TARGET_LINK_LIBRARIES(${TARGET_NAME}
-        afb-helpers
-        ${link_libraries}
-    )

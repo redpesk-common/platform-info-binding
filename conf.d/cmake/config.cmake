@@ -65,6 +65,7 @@ set (gcc_minimal_version 4.9)
 set (PKG_REQUIRED_LIST
 	json-c>=0.12
 	afb-daemon
+	afb-helpers
 )
 
 # You can also consider to include libsystemd
