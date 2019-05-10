@@ -20,11 +20,43 @@
 
 local testPrefix ="agl-info_BasicAPITest_"
 
+_AFT.setBeforeAll(function()
+
+  if not os.execute("/bin/bash ".._AFT.bindingRootDir.."/var/testPresence.sh") then
+
+    print("Platform-info environment already set up")
+    return 0
+
+  else
+    if not os.execute("/bin/bash ".._AFT.bindingRootDir.."/var/createPlatformInfoDirectory.sh") then
+
+      print("Fail to set up Platform-info test environment")
+      return -1
+
+    else
+      print("Platform-info environment set up")
+      _AFT.setAfterAll(function()
+        if not os.execute("/bin/bash ".._AFT.bindingRootDir.."/var/removePlatforInfoDirectory.sh") then
+
+          print("Fail to set down Platform-info test environment")
+          return -1
+
+        else
+          print("Platform-info environment set down")
+          return 0
+
+        end
+      end)
+      return 0
+    end
+  end
+end)
+
 -- This tests the 'get' verb of the platform-info API
 _AFT.testVerbStatusSuccess(testPrefix.."get", "platform-info", "get", ".build.layers.agl-manifest.revision")
 
 -- This tests the 'get' verb of the platform-info API
-_AFT.testVerbStatusError(testPrefix.."get", "platform-info", "get", {})
+_AFT.testVerbStatusSuccess(testPrefix.."get", "platform-info", "get", {})
 
 -- This tests the 'set' verb of the platform-info API
 _AFT.testVerbStatusSuccess(testPrefix.."set", "platform-info", "set", {arg=".build.layers.agl-manifest.revision", value="test"})

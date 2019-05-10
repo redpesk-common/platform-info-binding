@@ -1,0 +1,1 @@
+{"cpu_count":6,"bluetooth_devices":"","soc_family":"R-Car Gen3","cpu_arch":"aarch64","soc_name":"M3","soc_id":"r8a7796","cpu_compatibility":"cortex-a57 armv8","memory_total":1753,"soc_revision":"ES1.0","ethernet_devices":"dummy0 eth0","can_devices":"can0 can1 sllin0","board_model":"kingfisher-m3ulcb-r8a7796","wifi_devices":"wlan0"}
