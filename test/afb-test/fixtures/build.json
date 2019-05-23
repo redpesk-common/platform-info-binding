@@ -1,0 +1,46 @@
+{
+    "machine": "m3ulcb",
+    "features": [
+      "agl-appfw-smack",
+      "agl-audio-4a-framework",
+      "agl-demo",
+      "agl-devel",
+      "agl-hmi-framework",
+      "agl-localdev",
+      "agl-netboot",
+      "agl-profile-graphical",
+      "agl-profile-graphical-qt5",
+      "agl-pulseaudio",
+      "agl-speech-framework"
+    ],
+    "layers": {
+      "agl-manifest": "0208d9e",
+      "meta-agl-demo": "7.90.0-17-gce26a8c",
+      "meta-agl-devel": "7.90.0-20-gc9baba0",
+      "meta-agl-extra": "7.90.0-0-g65f825f",
+      "meta-agl": "7.90.0-62-g0b9eef32",
+      "meta-gplv2": "yocto-2.6.2-0-gaabc30f",
+      "meta-intel": "yocto-2.6.2-0-g27dadcfc",
+      "meta-iot-bzh": "4.99.3-122-g9dfd6d7",
+      "meta-openembedded": "4cd3a39f2",
+      "meta-qt5": "5.2.1+origin/release-584-g8193771",
+      "meta-raspberrypi": "c71d79e",
+      "meta-rcar": "5aecbd9",
+      "meta-renesas-rcar-gen3": "b9d007e",
+      "meta-security": "31dc4e7",
+      "meta-security-isafw": "489abdc",
+      "poky": "thud-20.0.1-203-gfaeb366bc3"
+    },
+    "build_hash": "Ffb84f302-Lde43b39d",
+    "build_id": "AGL-m3ulcb-Ffb84f302-Lde43b39d",
+    "bb_machine_arch": "m3ulcb",
+    "bb_machineoverrides": "rcar-gen3:r8a7796:m3ulcb:aarch64:ulcb",
+    "bb_machine_features": "agl-egvirt gsx multimedia rtc qemu-usermode",
+    "bb_distro_codename": "halibut",
+    "bb_distro_features": "acl alsa argp bluetooth ext2 irda largefile pcmcia usbgadget usbhost wifi xattr nfs zeroconf pci 3g nfc ipv4 ipv6 libc-backtrace libc-big-macros libc-bsd libc-cxx-tests libc-catgets libc-charsets libc-crypt libc-crypt-ufc libc-db-aliases libc-envz libc-fcvt libc-fmtmsg libc-fstab libc-ftraverse libc-getlogin libc-idn libc-inet-anl libc-libm libc-locales libc-locale-code libc-memusage libc-nsswitch libc-rcmd libc-rtld-debug libc-spawn libc-streams libc-utmp libc-utmpx libc-wordexp libc-posix-clang-wchar libc-posix-regexp libc-posix-regexp-glibc libc-posix-wchar-io largefile systemd opengl wayland pam bluetooth bluez5 3g surroundview bluetooth netboot smack dbus-cynara xattr automount agl-audio-4a-framework agl-hmi-framework agl-devel pulseaudio sota pam use_eva_pkg h264dec_lib h264enc_lib aaclcdec_lib aaclcdec_mdw gobject-introspection-data ldconfig",
+    "bb_distro_branch_version_tag": "halibut/7.90.0",
+    "bb_aglversion": "7.90.0",
+    "bb_agl_branch": "master",
+    "bb_aglreleasetype": "agldevelopment"
+  }
+  

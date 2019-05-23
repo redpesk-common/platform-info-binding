@@ -6,3 +6,4 @@ nbproject/private
 *.tar.gz
 .vscode
 __*
+!test/afb-test/fixtures/build.json
