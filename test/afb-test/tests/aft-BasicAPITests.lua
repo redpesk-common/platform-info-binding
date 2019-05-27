@@ -53,7 +53,7 @@ _AFT.setBeforeAll(function()
 end)
 
 -- This tests the 'get' verb of the platform-info API
-_AFT.testVerbStatusSuccess(testPrefix.."get", "platform-info", "get", ".build.layers.agl-manifest.revision")
+_AFT.testVerbStatusSuccess(testPrefix.."get", "platform-info", "get", ".layers.agl-manifest")
 
 -- This tests the 'get' verb of the platform-info API
 _AFT.testVerbStatusSuccess(testPrefix.."get", "platform-info", "get", {})

@@ -23,4 +23,4 @@ set -e
 #set SUDO variable
 SUDO=$(command -v sudo)
 
-"${SUDO}" rm -rf "/etc/platform-info"
+"${SUDO}" rm -rf "/etc/platform-info/*"
