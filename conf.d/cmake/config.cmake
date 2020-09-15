@@ -19,11 +19,11 @@
 # Project Info
 # ------------------
 set(PROJECT_NAME "agl-service-platform-info")
-set(PROJECT_VERSION 6.90)
+set(PROJECT_VERSION 1.0)
 set(API_NAME platform-info)
 set(PROJECT_PRETTY_NAME "Platform Information provider binding")
 set(PROJECT_DESCRIPTION "A binding meant to provide system, platform, build information for others bindings and apps")
-set(PROJECT_URL "https://github.com/iotbzh/agl-service-platform-info")
+set(PROJECT_URL "https://gerrit.automotivelinux.org/gerrit/apps/agl-service-platform-info")
 set(PROJECT_ICON "icon.png")
 set(PROJECT_AUTHOR "Forlot, Romain")
 set(PROJECT_AUTHOR_MAIL "romain.forlot@iot.bzh")
