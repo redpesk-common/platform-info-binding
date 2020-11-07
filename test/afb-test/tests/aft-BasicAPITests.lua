@@ -52,6 +52,8 @@ _AFT.setBeforeAll(function()
   end
 end)
 
+local ev_mon_arg = "monitor-devices"
+
 -- This tests the 'get' verb of the platform-info API
 _AFT.testVerbStatusSuccess(testPrefix.."get", "platform-info", "get", ".layers.agl-manifest")
 
@@ -61,8 +63,11 @@ _AFT.testVerbStatusSuccess(testPrefix.."get", "platform-info", "get", {})
 -- This tests the 'set' verb of the platform-info API
 _AFT.testVerbStatusSuccess(testPrefix.."set", "platform-info", "set", {arg=".build.layers.agl-manifest.revision", value="test"})
 
--- This tests the 'subscribe' verb of the platform-info API
-_AFT.testVerbStatusSuccess(testPrefix.."subscribe", "platform-info", "subscribe", {})
+-- This tests the 'subscribe' verb of the platform-info API for monitoring devices
+_AFT.testVerbStatusSuccess(testPrefix.."subscribe", "platform-info", "subscribe", {event=ev_mon_arg})
 
--- This tests the 'unsubscribe' verb of the platform-info API
-_AFT.testVerbStatusSuccess(testPrefix.."unsubscribe", "platform-info", "unsubscribe", {})
+-- This tests the 'unsubscribe' verb of the platform-info API for monitoring devices
+_AFT.testVerbStatusSuccess(testPrefix.."unsubscribe", "platform-info", "unsubscribe", {event=ev_mon_arg})
+
+-- This tests the 'scan' verb of the platform-info API
+_AFT.testVerbStatusSuccess(testPrefix.."scan", "platform-info", "scan", {})
