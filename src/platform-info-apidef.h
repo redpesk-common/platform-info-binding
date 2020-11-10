@@ -5,6 +5,7 @@ static const struct afb_auth _afb_auths_platform_info[] = {
 
  void afv_get(afb_req_t req);
  void afv_set(afb_req_t req);
+ void afv_scan(afb_req_t req);
  void afv_subscribe(afb_req_t req);
  void afv_unsubscribe(afb_req_t req);
 
@@ -21,6 +22,13 @@ static const struct afb_verb_v3 _afb_verbs_platform_info[] = {
         .callback = afv_set,
         .auth = &_afb_auths_platform_info[1],
         .info = "Set a platform data.",
+        .session = AFB_SESSION_NONE
+    },
+    {
+        .verb = "scan",
+        .callback = afv_scan,
+        .auth = NULL,
+        .info = "Scan system devices",
         .session = AFB_SESSION_NONE
     },
     {

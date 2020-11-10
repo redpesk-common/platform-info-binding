@@ -45,6 +45,7 @@ typedef struct {
 }pinfo_client_ctx_t;
 
 
-int pinfo_device_monitor(afb_req_t req);
+int                 pinfo_device_monitor(afb_req_t req);
+struct json_object* pinfo_device_scan(json_object *jfilter, json_object* jmask);
 
 #endif

@@ -172,17 +172,35 @@ afv_static_info(const char* dir) {
 	return static_info;
 }
 
+void afv_scan(afb_req_t req) {
+	json_object* jres = NULL;
+	json_object* jfilter = NULL;
+	json_object* jmask = NULL;
+	json_object* jargs = afb_req_json(req);
+
+	if(json_object_is_type(jargs,json_type_object)) {
+		json_object_object_get_ex(jargs,"filter",&jfilter);
+		json_object_object_get_ex(jargs,"mask",&jmask);
+	}
+
+	jres = pinfo_device_scan(jfilter,jmask);
+
+	if(jres) {
+		afb_req_success(req,jres,"Scan success");
+	} else {
+		afb_req_fail(req,"failed","Scan failed");
+	}
+}
+
 int init(afb_api_t api) {
 	// Initializing the platform_info binding object and associated it to
 	// the api
-	AFB_DEBUG("init() ...");
 	pinfo_api_ctx_t *api_ctx = NULL;
 	int ret = PINFO_OK;
 
 	api_ctx = malloc(sizeof(*api_ctx));
 
 	if(api_ctx) {
-		AFB_DEBUG("init() ... OK");
 		api_ctx->info = afv_static_info(PLATFORM_INFO_DIR);
 		AFB_API_DEBUG(api,"The API static data: %s",
 		json_object_to_json_string_ext(api_ctx->info, JSON_C_TO_STRING_PRETTY));
