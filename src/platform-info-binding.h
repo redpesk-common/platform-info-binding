@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2018 "IoT.bzh"
+ * Copyright (C) 2016, 2018, 2020 "IoT.bzh"
  *
  * Author "Romain Forlot" <romain.forlot@iot.bzh>
  *
@@ -23,5 +23,3 @@ struct key_search_t {
 	afb_api_t api;
 	json_object **result;
 };
-
-json_object *platform_info;

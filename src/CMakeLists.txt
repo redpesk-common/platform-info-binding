@@ -18,7 +18,10 @@
 PROJECT_TARGET_ADD(platform-info)
 
     # Define project Targets
-    ADD_LIBRARY(${TARGET_NAME} MODULE platform-info-binding.c)
+    ADD_LIBRARY(${TARGET_NAME} MODULE
+        platform-info-binding.c
+        platform-info-devices.c
+    )
 
     # Binder exposes a unique public entry point
     SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES

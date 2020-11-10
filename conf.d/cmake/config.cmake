@@ -63,9 +63,10 @@ set (gcc_minimal_version 4.9)
 # PKG_CONFIG required packages
 # -----------------------------
 set (PKG_REQUIRED_LIST
-	json-c>=0.12
+	json-c>=0.13
 	afb-daemon
 	afb-helpers
+	libudev
 )
 
 # You can also consider to include libsystemd
