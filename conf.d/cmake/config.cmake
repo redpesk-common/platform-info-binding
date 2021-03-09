@@ -18,15 +18,15 @@
 
 # Project Info
 # ------------------
-set(PROJECT_NAME "agl-service-platform-info")
-set(PROJECT_VERSION 6.90)
+set(PROJECT_NAME "platform-info-binding")
+set(PROJECT_VERSION 1.0)
 set(API_NAME platform-info)
 set(PROJECT_PRETTY_NAME "Platform Information provider binding")
 set(PROJECT_DESCRIPTION "A binding meant to provide system, platform, build information for others bindings and apps")
-set(PROJECT_URL "https://github.com/iotbzh/agl-service-platform-info")
+set(PROJECT_URL "http://git.ovh.iot/redpesk/redpesk-common/platform-info-binding/")
 set(PROJECT_ICON "icon.png")
-set(PROJECT_AUTHOR "Forlot, Romain")
-set(PROJECT_AUTHOR_MAIL "romain.forlot@iot.bzh")
+set(PROJECT_AUTHOR "LEFEBVRE Valentin")
+set(PROJECT_AUTHOR_MAIL "valentin.lefebvre@iot.bzh")
 set(PROJECT_LICENSE "APL2.0")
 set(PROJECT_LANGUAGES "C")
 
@@ -37,10 +37,9 @@ set(PROJECT_LANGUAGES "C")
 # relative to the root project directory
 set(PROJECT_CMAKE_CONF_DIR "conf.d")
 
-# Compilation Mode (DEBUG, RELEASE, COVERAGE or PROFILING)
+# Compilation Mode (DEBUG, RELEASE)
 # ----------------------------------
-#set(BUILD_TYPE "DEBUG")
-#set(USE_EFENCE 1)
+set(BUILD_TYPE "RELEASE")
 
 # Kernel selection if needed. You can choose between a
 # mandatory version to impose a minimal version.
@@ -54,7 +53,7 @@ set(PROJECT_CMAKE_CONF_DIR "conf.d")
 # Yocto SDK Kernel version.
 # -----------------------------------------------
 #set (kernel_mandatory_version 4.8)
-#set (kernel_minimal_version 4.8)
+set (kernel_minimal_version 4.8)
 
 # Compiler selection if needed. Impose a minimal version.
 # -----------------------------------------------
@@ -63,8 +62,8 @@ set (gcc_minimal_version 4.9)
 # PKG_CONFIG required packages
 # -----------------------------
 set (PKG_REQUIRED_LIST
-	json-c>=0.12
-	afb-daemon
+	json-c>=0.13
+	afb-binding
 	afb-helpers
 )
 
@@ -75,7 +74,10 @@ set (PKG_REQUIRED_LIST
 # Prefix path where will be installed the files
 # Default: /usr/local (need root permission to write in)
 # ------------------------------------------------------
-#set(INSTALL_PREFIX /opt/AGL CACHE PATH "INSTALL PREFIX PATH")
+set(INSTALL_PREFIX  $ENV{HOME}/opt)
+set(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX}/lib64/pkgconfig ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+set(LD_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib64 ${CMAKE_INSTALL_PREFIX}/lib)
+
 
 # Customize link option
 # -----------------------------
@@ -133,6 +135,10 @@ set (PKG_REQUIRED_LIST
 # CACHE STRING "Compilation flags for RELEASE build type.")
 
 add_definitions(-DAFB_BINDING_VERSION=3)
+
+# Compilation options definition
+set(SCRIPTS_PATH "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/var" CACHE STRING "SCRIPTS_PATH")
+add_definitions(-DSCRIPTS_PATH="${SCRIPTS_PATH}")
 
 # Location for config.xml.in template file.
 #
@@ -196,7 +202,7 @@ set(AFB_REMPORT "1234" CACHE PATH "Default binder listening port")
 
 # Print a helper message when every thing is finished
 # ----------------------------------------------------
-set(CLOSING_MESSAGE "Typical binding launch: cd ${CMAKE_BINARY_DIR}/package \\&\\& afb-daemon --port=${AFB_REMPORT} --workdir=. --ldpaths=lib --roothttp=htdocs  --token=\"${AFB_TOKEN}\" --tracereq=common --verbose")
+set(CLOSING_MESSAGE "platform-info-binding launch: SCRIPTS_PATH=../scripts/scripts afb-binder --port=${PORT} --name=afb-platform-info --workdir=${CMAKE_BINARY_DIR}/package --ldpaths=${CMAKE_BINARY_DIR} --roothttp=htdocs  -vvv")
 set(PACKAGE_MESSAGE "Install widget file using in the target : afm-util install ${PROJECT_NAME}.wgt")
 
 # Optional schema validator about now only XML, LUA and JSON

@@ -8,7 +8,7 @@ static const struct afb_auth _afb_auths_platform_info[] = {
  void afv_subscribe(afb_req_t req);
  void afv_unsubscribe(afb_req_t req);
 
-static const struct afb_verb_v3 _afb_verbs_platform_info[] = {
+static const afb_verb_t _afb_verbs_platform_info[] = {
     {
         .verb = "get",
         .callback = afv_get,
@@ -48,7 +48,7 @@ static const struct afb_verb_v3 _afb_verbs_platform_info[] = {
 
 int init(afb_api_t api);
 
-const struct afb_binding_v3 afbBindingV3 = {
+const afb_binding_t afbBindingExport = {
     .api = "platform-info",
     .specification = NULL,
     .info = "",

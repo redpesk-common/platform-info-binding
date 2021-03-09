@@ -32,31 +32,126 @@
 #define HOTPLUG_NS "hotplug"
 #endif
 
-void afv_get(afb_req_t req) {
-	char *json_path = NULL, *full_json_path = NULL;
-	json_object *platform_info = (json_object*) afb_api_get_userdata(req->api);
-	json_object *args = afb_req_json(req), *result = NULL;
+#ifndef SCRIPTS_PATH
+    #define SCRIPTS_PATH "@SCRIPTS_PATH@"
+#endif
 
-	switch (json_object_get_type(args)) {
-		case json_type_null:
-			result = platform_info;
-			break;
-		case json_type_string:
-			full_json_path = strdupa(json_object_get_string(args));
-			result = platform_info;
-			for(json_path = strtok(full_json_path, "."); json_path && *json_path; json_path = strtok(NULL, ".")) {
-				if(! json_object_object_get_ex(result, json_path, &result)) {
-					afb_req_fail(req, "A key hasn't been found in JSON path.", json_path);
-					return;
+static int parseDataScrpitToJson(char * data, json_object * dataJ) {
+	const char * separators = "/\n";
+	// Extract each token and fill into a json object
+	char * dataToken = strtok( data, separators);
+	while (dataToken != NULL) {
+		json_object_array_add(dataJ, json_object_new_string(dataToken));
+		dataToken = strtok(NULL, separators);
+	}
+	return 0;
+}
+
+static int specialAction(afb_req_t req, char * input_name, json_object *resultJ) {
+	char script_name[256], path[256], cmd[256];
+    const char *scriptPathEnv = NULL;
+	int err;
+	DIR *d;
+	FILE *fp;
+	struct dirent *dir;
+    json_object *elemJ = NULL;
+
+	// add .sh to the name
+	strcpy(script_name, input_name);
+	strcat(script_name, ".sh");
+
+	scriptPathEnv = getenv("SCRIPTS_PATH");
+	if (!scriptPathEnv){
+        AFB_API_NOTICE(req->api, "Using default acript path : %s", SCRIPTS_PATH);
+        scriptPathEnv = SCRIPTS_PATH;
+    }
+    else AFB_API_NOTICE(req->api, "Found env script path : %s", scriptPathEnv);
+	
+	d = opendir(scriptPathEnv);
+
+	if (d) {
+		while ((dir = readdir(d)) != NULL) {
+			// Compare with name given
+			if ( strcmp(dir->d_name, script_name) == 0 ) {
+				// Create command line
+				strcpy(cmd, "sh ");
+				strcat(cmd, scriptPathEnv);
+				strcat(cmd, "/");
+				strcat(cmd, script_name);
+
+				// Open Command in reading mod
+				fp = popen(cmd, "r");
+				if (fp == NULL) goto PopenErrorExists;
+
+				while (fgets(path, sizeof(path), fp) != NULL) {
+					elemJ = json_object_new_array();
+					err = parseDataScrpitToJson(path, elemJ);
+					if (err) goto ParseErrorExists;
+					json_object_array_add(resultJ, elemJ);
 				}
+				pclose(fp);
+				closedir(d);
+				return 1;
 			}
-			break;
-		default:
-			afb_req_fail(req, "Type error", "Argument type is unknown, you must provide a string only");
-			return;
+		}
 	}
 
-	afb_req_success(req, json_object_get(result), NULL);
+	goto OnErrorExit;
+
+PopenErrorExists:
+	pclose(fp);
+	AFB_API_ERROR(req->api, "Failed to run scripts");
+	goto OnErrorExit;
+
+ParseErrorExists:
+	pclose(fp);
+	AFB_API_ERROR(req->api, "Failed to parse data");
+	goto OnErrorExit;
+
+OnErrorExit:
+	closedir(d);
+	return 0;
+}
+
+void afv_get(afb_req_t req) {
+	pinfo_api_ctx_t *api_ctx = (pinfo_api_ctx_t*)afb_api_get_userdata(req->api);
+
+	if(api_ctx) {
+		json_object *resultJ = NULL;
+		json_object *args = afb_req_json(req);
+
+		switch (json_object_get_type(args)) {
+			case json_type_null:
+				resultJ = api_ctx->info;
+				break;
+			case json_type_string: {
+				char *json_path = NULL;
+				char *full_json_path = NULL;
+
+				full_json_path = strdupa(json_object_get_string(args));
+				resultJ = api_ctx->info;
+
+				for(json_path = strtok(full_json_path, ".");
+					json_path && *json_path;
+					json_path = strtok(NULL, ".")) {
+					if(! json_object_object_get_ex(resultJ, json_path, &resultJ)) {
+						// TODO Check special command
+						resultJ = json_object_new_array();
+						if ( specialAction(req, json_path, resultJ) ) break;
+						afb_req_fail(req, "A key hasn't been found in JSON path.", json_path);
+						return;
+					}
+				}
+			}
+			default:
+				afb_req_fail(req, "Type error", "Argument type is unknown, you must provide a string only");
+				return;
+		}
+
+		afb_req_success(req, json_object_get(resultJ), NULL);
+	} else {
+		afb_req_fail(req,"failed","The API contains no context!");
+	}
 }
 
 void afv_set(afb_req_t req) {
