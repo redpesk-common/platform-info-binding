@@ -19,6 +19,20 @@
 #include <wrap-json.h>
 #include "platform-info-apidef.h"
 
+const char * all_info[11] =  {
+	"os_name",
+	"os_version",
+	"soc_vendor",
+	"soc_revision",
+	"soc_family",
+	"soc_id",
+	"cpu_count",
+	"board_model",
+	"afm_packages_installed",
+	"packages_number",
+	"packages_installed"
+};
+
 struct key_search_t {
 	afb_api_t api;
 	json_object **result;

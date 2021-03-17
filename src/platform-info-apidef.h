@@ -4,6 +4,7 @@ static const struct afb_auth _afb_auths_platform_info[] = {
 };
 
  void afv_get(afb_req_t req);
+ void afv_get_all_info(afb_req_t req);
  void afv_set(afb_req_t req);
  void afv_subscribe(afb_req_t req);
  void afv_unsubscribe(afb_req_t req);
@@ -14,6 +15,12 @@ static const afb_verb_t _afb_verbs_platform_info[] = {
         .callback = afv_get,
         .auth = &_afb_auths_platform_info[0],
         .info = "Get a platform data.",
+        .session = AFB_SESSION_NONE
+    },{
+        .verb = "get_all_info",
+        .callback = afv_get_all_info,
+        .auth = &_afb_auths_platform_info[0],
+        .info = "Get a set of platform data.",
         .session = AFB_SESSION_NONE
     },
     {

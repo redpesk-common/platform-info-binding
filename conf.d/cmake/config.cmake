@@ -39,7 +39,8 @@ set(PROJECT_CMAKE_CONF_DIR "conf.d")
 
 # Compilation Mode (DEBUG, RELEASE)
 # ----------------------------------
-set(BUILD_TYPE "RELEASE")
+set(BUILD_TYPE "DEBUG")
+set(CMAKE_BUILD_TYPE "DEBUG")
 
 # Kernel selection if needed. You can choose between a
 # mandatory version to impose a minimal version.
@@ -202,7 +203,7 @@ set(AFB_REMPORT "1234" CACHE PATH "Default binder listening port")
 
 # Print a helper message when every thing is finished
 # ----------------------------------------------------
-set(CLOSING_MESSAGE "platform-info-binding launch: SCRIPTS_PATH=../scripts/scripts afb-binder --port=${PORT} --name=afb-platform-info --workdir=${CMAKE_BINARY_DIR}/package --ldpaths=${CMAKE_BINARY_DIR} --roothttp=htdocs  -vvv")
+set(CLOSING_MESSAGE "platform-info-binding launch: SCRIPTS_PATH=../scripts/scripts afb-binder --port=1234 --name=afb-platform-info --workdir=${CMAKE_BINARY_DIR}/package --ldpaths=${CMAKE_BINARY_DIR} --roothttp=htdocs  -vvv")
 set(PACKAGE_MESSAGE "Install widget file using in the target : afm-util install ${PROJECT_NAME}.wgt")
 
 # Optional schema validator about now only XML, LUA and JSON
