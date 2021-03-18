@@ -5,12 +5,13 @@ function list_afm_packaged() {
     [[ ! -d /var/local/lib/afm/applications ]] && { error "Unable to find /var/local/lib/afm/applications/"; return 1;}
     for package in $(ls /var/local/lib/afm/applications/); do
         fields=()
-        for field in $(sudo yum list installed | grep redis-tsdb-binding); do
-            fields+=($field)
-        done
-        echo "{\"${package}\": \"${fields[1]}\"}"
+	if [[ "$package" != "include" ]]; then
+            for field in $(sudo yum list installed | grep ${package}); do
+                fields+=($field)
+            done
+	    echo "{\"${package}\": \"${fields[1]}\"}"
+        fi
     done
-
 }
 
 list_afm_packaged

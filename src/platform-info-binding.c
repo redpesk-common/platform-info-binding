@@ -51,7 +51,7 @@ static int specialAction(afb_req_t req, char * input_name, json_object *resultJ)
 
 	scriptPathEnv = getenv("SCRIPTS_PATH");
 	if (!scriptPathEnv){
-        AFB_API_NOTICE(req->api, "Using default acript path : %s", SCRIPTS_PATH);
+        AFB_API_NOTICE(req->api, "Using default script path : %s", SCRIPTS_PATH);
         scriptPathEnv = SCRIPTS_PATH;
     }
     else AFB_API_NOTICE(req->api, "Found env script path : %s/%s", scriptPathEnv, script_name);
