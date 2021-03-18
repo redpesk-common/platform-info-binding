@@ -17,8 +17,11 @@
 # Add target to project dependency list
 PROJECT_TARGET_ADD(platform-info)
 
+    # Add generated file
+    SET(JSON_INFO_C ${CMAKE_CURRENT_BINARY_DIR}/json_info.c)
+
     # Define project Targets
-    ADD_LIBRARY(${TARGET_NAME} MODULE platform-info-binding.c)
+    ADD_LIBRARY(${TARGET_NAME} MODULE platform-info-binding.c ${JSON_INFO_C})
 
     # Binder exposes a unique public entry point
     SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
@@ -26,3 +29,12 @@ PROJECT_TARGET_ADD(platform-info)
         LABELS "BINDING"
         OUTPUT_NAME ${TARGET_NAME}
     )
+
+    # Generate c file for the info verb
+    ADD_CUSTOM_COMMAND(
+		OUTPUT json_info.c
+	    COMMAND echo 'const char * info_verbS=\"\\' > ${JSON_INFO_C}
+    	COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/info_verb.json | sed -e 's/$$/\\\\/' -e 's/\"/\\\\\"/g' >> ${JSON_INFO_C}
+    	COMMAND echo '\\n\"\;' >> ${JSON_INFO_C}
+    	DEPENDS info_verb.json
+	)

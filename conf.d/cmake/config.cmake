@@ -138,7 +138,7 @@ set(LD_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib64 ${CMAKE_INSTALL_PREFIX}/lib)
 add_definitions(-DAFB_BINDING_VERSION=3)
 
 # Compilation options definition
-set(SCRIPTS_PATH "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/var" CACHE STRING "SCRIPTS_PATH")
+set(SCRIPTS_PATH "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/var/" CACHE STRING "SCRIPTS_PATH")
 add_definitions(-DSCRIPTS_PATH="${SCRIPTS_PATH}")
 
 # Location for config.xml.in template file.

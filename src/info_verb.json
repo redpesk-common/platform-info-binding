@@ -1,0 +1,42 @@
+{
+    "metadata": {
+        "uid": "platform-info",
+        "info": "Platform Info Binding",
+        "version": "1.0"
+    },
+    "groups": [
+        {
+            "uid": "hightlevel",
+            "info": "Hight level API",
+            "verbs": [
+                {
+                    "uid": "get",
+                    "info": "Get a platform data.",
+                    "verb": "get",
+                    "usage": "soc_name"
+                    
+                },
+                {
+                    "uid": "get_all_info",
+                    "info": "Get a set of useful system inforamtions",
+                    "verb": "get_all_info"
+                },
+                {
+                    "uid": "set",
+                    "info": "Not available for now",
+                    "verb": "set"
+                },
+                {
+                    "uid": "subscribe",
+                    "info": "Not available for now",
+                    "verb": "subscribe"
+                },
+                {
+                    "uid": "unsubscribe",
+                    "info": "Not available for now",
+                    "verb": "unsubscribe"
+                }
+            ]
+        }
+    ]
+}

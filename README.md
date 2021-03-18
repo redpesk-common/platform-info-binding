@@ -8,7 +8,7 @@ doted path.
 
 i.e: **build.machine.model** or **build.id**
 
-Moreover, it is possible to get more specifics informations in adding scripts which return informations to put on JSON. Scripts have to return informations separated by '/' 
+Moreover, it is possible to get more specifics informations in adding scripts which return informations to put on JSON. Scripts have to return a correct json object.
 
 ## Build for 'native' Linux distros (Fedora, openSUSE, Debian, Ubuntu, ...)
 
@@ -51,41 +51,31 @@ ON-REPLY 6:platform-info/get: OK
 
 ```bash
 platform-info get "packages_installed"
-ON-REPLY 7:platform-info/get: OK
+ON-REPLY 3:platform-info/get: OK
 {
   "jtype":"afb-reply",
   "request":{
     "status":"success"
   },
   "response":[
-    [
-      "acl.x86_64",
-      "2.2.53-9.fc33"
-    ],
-    [
-      "afb-binder.x86_64",
-      "4.0.0beta2-26.4"
-    ],
-    [
-      "afb-binding-devel.x86_64",
-      "4.0.0beta2-23.4"
-    ],
-    [
-      "afb-client.x86_64",
-      "4.0.0beta3-23.4"
-    ],
-    [
-      "afb-cmake-modules.noarch",
-      "10.0.0-75.4"
-    ],
-    [
-      "afb-idl.x86_64",
-      "0.1-6.4"
-    ],
-    [
-      "afb-libafb.x86_64",
-      "4.0.0beta10-46.1"
-    ],
+    {
+      "acl.x86_64":"2.2.53-9.fc33"
+    },
+    {
+      "afb-binder.x86_64":"4.0.0beta2-26.4"
+    },
+    {
+      "afb-binding-devel.x86_64":"4.0.0beta2-23.4"
+    },
+    {
+      "afb-client.x86_64":"4.0.0beta3-23.4"
+    },
+    {
+      "afb-cmake-modules.noarch":"10.0.0-75.4"
+    },
+    {
+      "afb-idl.x86_64":"0.1-6.4"
+    },
     [...]
 }
 ```

@@ -2,4 +2,4 @@
 
 numbers=$(yum list installed | wc --lines)
 
-echo "$numbers"
+echo "{\"numbers\" : $numbers}"

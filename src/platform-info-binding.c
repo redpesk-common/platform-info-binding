@@ -37,21 +37,9 @@
     #define SCRIPTS_PATH "@SCRIPTS_PATH@"
 #endif
 
-static int parseDataScrpitToJson(char * data, json_object * dataJ) {
-	const char * separators = "/\n";
-	// Extract each token and fill into a json object
-	char * dataToken = strtok( data, separators);
-	while (dataToken != NULL) {
-		json_object_array_add(dataJ, json_object_new_string(dataToken));
-		dataToken = strtok(NULL, separators);
-	}
-	return 0;
-}
-
 static int specialAction(afb_req_t req, char * input_name, json_object *resultJ) {
 	char script_name[256], path[256], cmd[256];
     const char *scriptPathEnv = NULL;
-	int err;
 	DIR *d;
 	FILE *fp;
 	struct dirent *dir;
@@ -66,37 +54,41 @@ static int specialAction(afb_req_t req, char * input_name, json_object *resultJ)
         AFB_API_NOTICE(req->api, "Using default acript path : %s", SCRIPTS_PATH);
         scriptPathEnv = SCRIPTS_PATH;
     }
-    else AFB_API_NOTICE(req->api, "Found env script path : %s", scriptPathEnv);
+    else AFB_API_NOTICE(req->api, "Found env script path : %s/%s", scriptPathEnv, script_name);
 	
 	d = opendir(scriptPathEnv);
+	if (!d) goto OpenDirError;
+	
+	while ((dir = readdir(d)) != NULL) {
+		// Compare with name given
+		if ( strcmp(dir->d_name, script_name) == 0 ) {
+			// Create command line
+			strcpy(cmd, "sh ");
+			strcat(cmd, scriptPathEnv);
+			strcat(cmd, "/");
+			strcat(cmd, script_name);
 
-	if (d) {
-		while ((dir = readdir(d)) != NULL) {
-			// Compare with name given
-			if ( strcmp(dir->d_name, script_name) == 0 ) {
-				// Create command line
-				strcpy(cmd, "sh ");
-				strcat(cmd, scriptPathEnv);
-				strcat(cmd, "/");
-				strcat(cmd, script_name);
+			// Open Command in reading mod
+			fp = popen(cmd, "r");
+			if (fp == NULL) goto PopenErrorExists;
 
-				// Open Command in reading mod
-				fp = popen(cmd, "r");
-				if (fp == NULL) goto PopenErrorExists;
-
-				while (fgets(path, sizeof(path), fp) != NULL) {
-					elemJ = json_object_new_array();
-					err = parseDataScrpitToJson(path, elemJ);
-					if (err) goto ParseErrorExists;
-					json_object_array_add(resultJ, elemJ);
-				}
-				pclose(fp);
-				closedir(d);
-				return 1;
+			// Get script's result
+			while (fgets(path, sizeof(path), fp) != NULL) {
+				elemJ = json_tokener_parse(path);
+				if (!elemJ) goto ParseErrorExists;
+				json_object_array_add(resultJ, elemJ);
 			}
+
+			pclose(fp);
+			break;
 		}
 	}
 
+	closedir(d);
+	return 1;
+
+OpenDirError:
+	AFB_API_ERROR(req->api, "Failed to open directory");
 	goto OnErrorExit;
 
 PopenErrorExists:
@@ -106,12 +98,35 @@ PopenErrorExists:
 
 ParseErrorExists:
 	pclose(fp);
-	AFB_API_ERROR(req->api, "Failed to parse data");
+	AFB_API_ERROR(req->api, "Failed to parse output data from script %s", input_name);
 	goto OnErrorExit;
 
 OnErrorExit:
 	closedir(d);
 	return 0;
+}
+
+extern const char * info_verbS;
+
+/*
+ * Function: infoVerb
+ * --------------------
+ * 	a callback to the verb 'info'
+ * 
+ * 	request: Request from the client 
+ * 
+ * 	returns: Void
+ */
+void afv_info(afb_req_t req) {
+    enum json_tokener_error jerr;
+
+    json_object * infoArgJ = json_tokener_parse_verbose(info_verbS, &jerr);
+    if (infoArgJ == NULL || jerr != json_tokener_success) {
+        afb_req_fail_f(req, "failed", "failure while packing info() verb arguments (error: %d)!", jerr);
+        return;
+    }
+    afb_req_success(req, infoArgJ, NULL);
+    return ;
 }
 
 void afv_get(afb_req_t req) {
@@ -139,7 +154,6 @@ void afv_get(afb_req_t req) {
 						afb_req_fail(req, "A key hasn't been found in JSON path.", json_path);
 						return;
 					}
-					printf("Found!\n");
 				}
 				break;
 			}
@@ -164,8 +178,7 @@ void afv_get_all_info(afb_req_t req) {
 	const char** all_info_ptr = all_info;
 	resultJ = api_ctx->info;
 
-	while(*all_info_ptr != 0) {
-		printf("%s \n", *all_info_ptr);
+	while(*all_info_ptr) {
 		if (!json_object_object_get_ex(api_ctx->info, *all_info_ptr, &resultJ)) {
 			resultJ = json_object_new_array();
 			if ( ! specialAction(req, (char *) *all_info_ptr, resultJ) ) {
@@ -255,7 +268,7 @@ static json_object * afv_static_info(afb_api_t api, const char * dir) {
 	return static_info;
 
 NoDirectoryError:
-	AFB_ERROR("The directory %s does not exist.", dir);
+	AFB_API_ERROR(api, "The directory %s does not exist.", dir);
 	goto OnErrorExit;
 
 OnErrorExit:

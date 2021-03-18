@@ -3,13 +3,21 @@ static const struct afb_auth _afb_auths_platform_info[] = {
     { .type = afb_auth_Permission, .text = "urn:AGL:permission::platform:info:set " }
 };
 
- void afv_get(afb_req_t req);
- void afv_get_all_info(afb_req_t req);
- void afv_set(afb_req_t req);
- void afv_subscribe(afb_req_t req);
- void afv_unsubscribe(afb_req_t req);
+void afv_info(afb_req_t req);
+void afv_get(afb_req_t req);
+void afv_get_all_info(afb_req_t req);
+void afv_set(afb_req_t req);
+void afv_subscribe(afb_req_t req);
+void afv_unsubscribe(afb_req_t req);
 
 static const afb_verb_t _afb_verbs_platform_info[] = {
+    {
+        .verb = "info",
+        .callback = afv_info,
+        .auth = &_afb_auths_platform_info[0],
+        .info = "Info regarding platform-info binding.",
+        .session = AFB_SESSION_NONE
+    },
     {
         .verb = "get",
         .callback = afv_get,

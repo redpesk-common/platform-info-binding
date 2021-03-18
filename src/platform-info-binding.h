@@ -19,7 +19,7 @@
 #include <wrap-json.h>
 #include "platform-info-apidef.h"
 
-const char * all_info[11] =  {
+const char * all_info[12] =  {
 	"os_name",
 	"os_version",
 	"soc_vendor",
@@ -30,7 +30,8 @@ const char * all_info[11] =  {
 	"board_model",
 	"afm_packages_installed",
 	"packages_number",
-	"packages_installed"
+	"packages_installed",
+	NULL
 };
 
 struct key_search_t {
