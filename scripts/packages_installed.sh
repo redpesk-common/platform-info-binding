@@ -1,32 +1,18 @@
 #!/bin/bash
 
 function list_packaged() {
-    COUNT=0
-    VERSION=""
-    PACKAGE=""
-    for package in $(yum list installed); do
-        let COUNT=${COUNT}+1
-        if [[ ${COUNT} == 1 ]] || [[ ${COUNT} == 2 ]]; then 
-            continue 
-        fi
-        case $(expr ${COUNT} % 3) in
-            0)
-                # name
-                PACKAGE="${package}"
-                ;;
-
-            1)
-                # version
-                VERSION="${package}"
-                ;;
-
-            2)
-                
-                echo "{\"${PACKAGE}\": \"${VERSION}\"}"
-                ;;
-            *)
-                ;;
-        esac
+    for packages in $(rpm -qa); do
+	    package=""
+	    for tmp in $(echo $packages | awk -F'-' '{for(i=1; i<=NF-2; ++i) print $i}'); do
+	    	if [[ $package == "" ]]
+		then
+		    package="$tmp"	
+	    	else
+			package="$package-$tmp"
+		fi
+	    done
+	    version=$(echo $packages | awk -F'-' '{print $(NF-1)}')
+	    echo "{\"$package\": \"$version\"}"
     done
 }
 

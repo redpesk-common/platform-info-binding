@@ -1,5 +1,5 @@
 #!/bin/bash
 
-numbers=$(yum list installed | wc --lines)
+numbers=$(rpm -qa | wc --lines)
 
 echo "{\"numbers\" : $numbers}"
