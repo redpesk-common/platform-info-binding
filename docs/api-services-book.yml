@@ -1,0 +1,14 @@
+type: books
+books:
+-
+  id: platform_info_binding
+  title: platform-info-binding
+  description: platform info binding documentation
+  keywords:
+  chapters:
+  - url: 1-architecture-presentation.md
+    name: Architecture presentation
+  - url: 2-installation-guide.md
+    name: Installation Guide
+  - url: 3-usages.md
+    name: Usage Guide
