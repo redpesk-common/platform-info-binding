@@ -63,7 +63,7 @@ set (gcc_minimal_version 4.9)
 # PKG_CONFIG required packages
 # -----------------------------
 set (PKG_REQUIRED_LIST
-	json-c>=0.13
+	json-c
 	afb-binding
 	afb-helpers
 )
