@@ -2,7 +2,7 @@
 
 ## I - prerequisite
 
-To be able to use correctly this binding you need to install first the tool which will create all important files at the path **/etc/platform-info**: **platform-runtime-tools**
+To be able to use this binding correctly you need to install first the tool which will create all important files at the path **/etc/platform-info**: **platform-runtime-tools**
 
 * Ubuntu / Debian
 
@@ -32,9 +32,9 @@ Building tools:
 * g++
 * make
 * cmake
-* afb-cmake-modukes
+* afb-cmake-modules
 
-Then the followings dependencies:
+Then the following dependencies:
 
 * json-c
 * afb-binding
