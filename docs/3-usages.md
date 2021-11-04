@@ -2,7 +2,7 @@
 
 ## I - Creation JSON files
 
-**platform-runtime-tools** will automatically generate all files into the directory **/etc/platform-info/** when it will be installed. However, in case of you want to refresh files or something wrong happens with the file generations. You can manually call services to get appropriate information files. You will have two information parts:
+**platform-runtime-tools** will automatically generate all files into the directory **/etc/platform-info/** when it is installed. However, in case you want to refresh files or something wrong happens with the file generations. You can manually call services to get appropriate information files. You will have two information parts:
 
 ### a. Core Information
 
@@ -44,7 +44,7 @@ afb-binder --port=8001 --name=afb-platform-info --workdir=/var/local/lib/afm/app
 
 #### get
 
-This API has a verb called *'get'*. At this verbs you will want to add your specific information requests. For example if you need to know the os version:
+This API has a verb called *'get'*. At this verb you will want to add your specific information requests. For example if you need to know the os version:
 
 ```bash
 afb-client ws://localhost:8001/api 
@@ -74,7 +74,7 @@ Here is a list of what you can ask:
 
 #### get_all_info
 
-And you have a verb called *'get_all_info'* that return a set of useful system information:
+And you have a verb called *'get_all_info'* that returns a set of useful system information:
 
 ```bash
 afb-client ws://localhost:8001/api
