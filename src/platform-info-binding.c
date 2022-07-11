@@ -173,10 +173,8 @@ void afv_get_all_info(afb_req_t req) {
 	if(!api_ctx) goto NoContextError;
 
 	json_object *resultJ = NULL;
-	json_object *responsJ = NULL;
-	json_object *elemJ = NULL;
+	json_object *responseJ = NULL;
 	const char** all_info_ptr = all_info;
-	resultJ = api_ctx->info;
 
 	while(*all_info_ptr) {
 		if (!json_object_object_get_ex(api_ctx->info, *all_info_ptr, &resultJ)) {
@@ -186,15 +184,19 @@ void afv_get_all_info(afb_req_t req) {
 				resultJ = json_object_new_object();
 				resultJ= json_object_new_string("Unknown");
 			}
+		} else {
+			resultJ = json_object_get(resultJ);
 		}
-		wrap_json_pack(&elemJ, "{so}", *all_info_ptr, resultJ);
 
-		if (!responsJ) responsJ = elemJ; 
-		wrap_json_object_add(responsJ, elemJ);
+		if (!responseJ) {
+			wrap_json_pack(&responseJ, "{so}", *all_info_ptr, resultJ);
+		} else {
+			json_object_object_add(responseJ, *all_info_ptr, resultJ);
+		}
    		++all_info_ptr;
 	}
 
-	afb_req_success(req, responsJ, NULL);
+	afb_req_success(req, responseJ, NULL);
 	return;
 
 NoContextError:
@@ -262,8 +264,10 @@ static json_object * afv_static_info(afb_api_t api, const char * dir) {
 #endif
 			wrap_json_object_add(static_info, current_file);
 			AFB_API_DEBUG(api, "JSON loaded: %s", json_object_to_json_string_ext(current_file, JSON_C_TO_STRING_PRETTY));
+			json_object_put(current_file);
 		}
 	}
+	closedir(dir_handle);
 
 	return static_info;
 
