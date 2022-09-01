@@ -1,6 +1,6 @@
 static const struct afb_auth _afb_auths_platform_info[] = {
-	{ .type = afb_auth_Permission, .text = "urn:AGL:permission::platform:info:get " },
-    { .type = afb_auth_Permission, .text = "urn:AGL:permission::platform:info:set " }
+	{ .type = afb_auth_Permission, .text = "urn:AGL:permission::platform:info:get" },
+    { .type = afb_auth_Permission, .text = "urn:AGL:permission::platform:info:set" }
 };
 
 void afv_info(afb_req_t req);
