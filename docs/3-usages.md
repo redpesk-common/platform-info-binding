@@ -37,7 +37,7 @@ $ cat /etc/platform-info/os.json
 To run this binding:
 
 ```bash
-afb-binder --port=8001 --name=afb-platform-info --workdir=/var/local/lib/afm/applications/platform-info-binding --binding=lib/afb-platform-info.so -vvv
+afb-binder --port=8001 --name=afb-platform-info --workdir=/usr/redpesk/platform-info-binding --binding=lib/afb-platform-info.so -vvv
 ```
 
 ### b. API verbs

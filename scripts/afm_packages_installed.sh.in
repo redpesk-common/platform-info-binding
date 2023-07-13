@@ -1,12 +1,13 @@
 #!/bin/bash
 
+appdir=@AFM_APP_DIR@
 function list_afm_packaged() {
     local fields=()
-    [[ ! -d /var/local/lib/afm/applications ]] && { error "Unable to find /var/local/lib/afm/applications/"; return 1;}
-    for packages in $(ls /var/local/lib/afm/applications/); do
+    [[ ! -d $appdir ]] && { error "Unable to find $appdir/"; return 1;}
+    for packages in $(ls $appdir/); do
         fields=()
         if [[ "$packages" != "include" ]] && [[  "$packages" != "recovery" ]]; then
-            FullNamePackage=$(rpm -qf /var/local/lib/afm/applications/$packages)
+            FullNamePackage=$(rpm -qf $appdir/$packages)
             package=""
             for tmp in $(echo $FullNamePackage | awk -F'-' '{for(i=1; i<=NF-2; ++i) print $i}'); do
                 if [[ $package == "" ]]
@@ -20,9 +21,9 @@ function list_afm_packaged() {
             echo "{\"${package}\": \"${Version}\"}"
 
             # Check if plugins
-            if [[ -d /var/local/lib/afm/applications/$packages/lib/plugins ]]; then
-                for plugins in $(ls /var/local/lib/afm/applications/$packages/lib/plugins); do
-                    FullNamePlugin=$(rpm -qf /var/local/lib/afm/applications/$packages/lib/plugins/$plugins)
+            if [[ -d $appdir/$packages/lib/plugins ]]; then
+                for plugins in $(ls $appdir/$packages/lib/plugins); do
+                    FullNamePlugin=$(rpm -qf $appdir/$packages/lib/plugins/$plugins)
                     plugin=""
                     for tmp in $(echo $FullNamePlugin | awk -F'-' '{for(i=1; i<=NF-2; ++i) print $i}'); do
                             if [[ $plugin == "" ]]; then

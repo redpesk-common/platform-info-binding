@@ -18,7 +18,13 @@
 
 PROJECT_TARGET_ADD(scripts)
 
-file(GLOB SCRIPT_FILES "*.sh")
+configure_file(afm_packages_installed.sh.in afm_packages_installed.sh @ONLY)
+
+set(SCRIPT_FILES
+	${CMAKE_CURRENT_BINARY_DIR}/afm_packages_installed.sh
+	${CMAKE_CURRENT_SOURCE_DIR}/packages_installed.sh
+	${CMAKE_CURRENT_SOURCE_DIR}/packages_number.sh
+)
 
 add_input_files("${SCRIPT_FILES}")
 

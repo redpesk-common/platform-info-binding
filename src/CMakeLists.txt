@@ -21,7 +21,7 @@ PROJECT_TARGET_ADD(platform-info)
     SET(JSON_INFO_C ${CMAKE_CURRENT_BINARY_DIR}/json_info.c)
 
     # Define project Targets
-    ADD_LIBRARY(${TARGET_NAME} MODULE platform-info-binding.c ${JSON_INFO_C})
+    ADD_LIBRARY(${TARGET_NAME} SHARED platform-info-binding.c ${JSON_INFO_C})
 
     # Binder exposes a unique public entry point
     SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
