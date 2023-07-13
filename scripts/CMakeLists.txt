@@ -1,7 +1,7 @@
 ###########################################################################
 # Copyright 2021 IoT.bzh
 #
-# author: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
+# author: Valentin Lefebvre <team@iot.bzh>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
