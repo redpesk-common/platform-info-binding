@@ -16,8 +16,6 @@
 
 # Project Info
 # ------------------
-set(PROJECT_NAME "platform-info-binding")
-set(PROJECT_VERSION 1.0)
 set(API_NAME platform-info)
 set(PROJECT_PRETTY_NAME "Platform Information provider binding")
 set(PROJECT_DESCRIPTION "A binding meant to provide system, platform, build information for others bindings and apps")
@@ -26,7 +24,6 @@ set(PROJECT_ICON "icon.png")
 set(PROJECT_AUTHOR "IoT.bzh Team")
 set(PROJECT_AUTHOR_MAIL "team@iot.bzh")
 set(PROJECT_LICENSE "APL2.0")
-set(PROJECT_LANGUAGES "C")
 
 # Which directories inspect to find CMakeLists.txt target files
 # set(PROJECT_SRC_DIR_PATTERN "*")

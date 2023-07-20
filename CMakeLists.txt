@@ -1,5 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
+project(platform-info-binding VERSION 8.1.0 LANGUAGES C)
+
 # define all CMAKE_INSTALL_XXXX vars
 include(GNUInstallDirs)
 
