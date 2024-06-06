@@ -16,8 +16,11 @@
  * limitations under the License.
  */
 
-#include <wrap-json.h>
-#include "platform-info-apidef.h"
+#define AFB_BINDING_VERSION 4
+#include <afb/afb-binding.h>
+#include <rp-utils/rp-jsonc.h>
+#include <afb-helpers4/afb-req-utils.h>
+
 
 const char * all_info[11] =  {
 	"os_name",

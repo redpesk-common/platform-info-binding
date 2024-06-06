@@ -18,7 +18,7 @@
 #ifndef PLATFORM_INFO_DEVICE_H
 #define PLATFORM_INFO_DEVICE_H
 
-#define AFB_BINDING_VERSION 3
+#define AFB_BINDING_VERSION 4
 #include <afb/afb-binding.h>
 #include "json-c/json.h"
 

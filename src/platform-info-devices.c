@@ -23,11 +23,14 @@
 #include <unistd.h>
 #include "platform-info-devices.h"
 
+#include <afb-helpers4/afb-data-utils.h>
+#include <afb-helpers4/afb-req-utils.h>
+
 #define JSON_NEW_CONST_KEY \
     (JSON_C_OBJECT_KEY_IS_CONSTANT | JSON_C_OBJECT_ADD_KEY_IS_NEW)
 #define UNUSED(x) (void)(x);
 
-static void*        pinfo_device_client_new(void* req_ctx);
+static int          pinfo_device_client_new(void* req_ctx, void **value, void (**free_cb)(void *), void **free_closure);
 static void         pinfo_device_client_free(void* client_ctx);
 static void*        pinfo_device_monitor_loop(pinfo_client_ctx_t* ctx);
 static void         pinfo_device_monitor_detect(pinfo_client_ctx_t* ctx, struct json_object* jdevice);
@@ -47,118 +50,147 @@ static json_object* pinfo_device_udevice_to_jlist_mask(
                                     unsigned jcpy_flags);
 
 static void
-pinfo_device_monitor_detect(pinfo_client_ctx_t* ctx, struct json_object* jdevice)
+pinfo_device_monitor_detect(pinfo_client_ctx_t *ctx, struct json_object *jdevice)
 {
-	afb_event_push((afb_event_t)ctx->ev_devs_changed,jdevice);
+   afb_data_t data = afb_data_json_c_hold(jdevice);
+   afb_event_push((afb_event_t)ctx->ev_devs_changed, 1, &data);
 }
+
+
+// int (*initcb)(void *closure, void **value, void (**freecb)(void *), void **freeclo)
+
+
 
 int
 pinfo_device_monitor(afb_req_t req) {
-    int res = PINFO_ERR;
+   int res = PINFO_ERR;
 
-    if(afb_req_context(req,0,pinfo_device_client_new,pinfo_device_client_free,req)) {
-        res = PINFO_OK;
-    }
+   if (afb_req_context(req, 0, pinfo_device_client_new, req)) {
+      res = PINFO_OK;
+   }
 
-    return res;
+   return res;
 }
 
 static void
-pinfo_device_client_free(void* client_ctx) {
-	if(client_ctx) {
-		pinfo_client_ctx_t* ctx = (pinfo_client_ctx_t*)client_ctx;
-		if(ctx) {
-			pthread_cancel(ctx->th);
-			udev_monitor_unref(ctx->umon_hndl);
-			udev_unref(ctx->udev_ctx);
-			afb_event_unref((afb_event_t)ctx->ev_devs_changed);
-			json_object_put(ctx->filter);
-			json_object_put(ctx->mask);
-			ctx->api_ctx->client_count--;
-			AFB_DEBUG("Client context released, client count: %d",ctx->api_ctx->client_count);
-		}
-	}
+pinfo_device_client_free(void *client_ctx)
+{
+   if (client_ctx) {
+      pinfo_client_ctx_t *ctx = (pinfo_client_ctx_t *)client_ctx;
+      if (ctx) {
+         pthread_cancel(ctx->th);
+         udev_monitor_unref(ctx->umon_hndl);
+         udev_unref(ctx->udev_ctx);
+         afb_event_unref((afb_event_t)ctx->ev_devs_changed);
+         json_object_put(ctx->filter);
+         json_object_put(ctx->mask);
+         ctx->api_ctx->client_count--;
+         AFB_DEBUG("Client context released, client count: %d", ctx->api_ctx->client_count);
+      }
+   }
 }
 
-static void*
-pinfo_device_client_new(void* req_ctx) {
-    pinfo_client_ctx_t* ctx = NULL;
-	afb_req_t req = (afb_req_t)(req_ctx);
+static int
+pinfo_device_client_new(void *req_ctx, void **value, void (**free_cb)(void *), void **free_closure)
+{
+   pinfo_client_ctx_t *ctx = NULL;
+   afb_req_t req = (afb_req_t)(req_ctx);
+   if (!req)
+      return -1;
 
-	if(req) {
-        ctx = malloc(sizeof(*ctx));
-        if(ctx) {
-            ctx->udev_ctx =  udev_new();
-            if(ctx->udev_ctx) {
-                ctx->umon_hndl = udev_monitor_new_from_netlink(ctx->udev_ctx,"udev");
-                ctx->filter = NULL;
-                ctx->mask = NULL;
-                ctx->umon_cb = NULL;
+   ctx = malloc(sizeof(*ctx));
+   if (!ctx) {
+      AFB_REQ_ERROR(req, "Failed to allocate memory for new client context.");
+      return -1;
+   }
 
-                if(ctx->umon_hndl) {
-                    json_object* jval = NULL;
-                    json_object* jargs = afb_req_json(req);
-                    pthread_attr_t attr;
+   ctx->udev_ctx = udev_new();
+   if (!ctx->udev_ctx) {
+      AFB_REQ_ERROR(req, "Failed to generate new udev object for the new client.");
+      return -1;
+   }
 
-                    ctx->ev_devs_changed = afb_api_make_event(req->api,"device_changed");
-                    if(afb_event_is_valid(ctx->ev_devs_changed)) {
-                        if(afb_req_subscribe(req,ctx->ev_devs_changed) == PINFO_OK) {
-                            ctx->umon_cb = (void(*)(void*,struct json_object*))pinfo_device_monitor_detect;
-                            if(json_object_object_get_ex(jargs,"filter",&jval) &&
-                                json_object_is_type(jval,json_type_object)) {
-                                json_object_deep_copy(jval,&ctx->filter,NULL);
-                            }
+   ctx->umon_hndl = udev_monitor_new_from_netlink(ctx->udev_ctx, "udev");
+   ctx->filter = NULL;
+   ctx->mask = NULL;
+   ctx->umon_cb = NULL;
 
-                            if(json_object_object_get_ex(jargs,"mask",&jval) &&
-                                json_object_is_type(jval,json_type_object)) {
-                                json_object_deep_copy(jval,&ctx->mask,NULL);
-                            }
+   if (!ctx->umon_hndl) {
+      AFB_REQ_ERROR(req, "Failed to generate new udev monitoring object for the new client.");
+      return -1;
+   }
+   json_object *jval = NULL;
+   afb_data_t result;
+   if (afb_req_param_convert(req, 0, AFB_PREDEFINED_TYPE_JSON_C, &result) < 0) {
+      afb_req_reply_string(req, AFB_ERRNO_INVALID_REQUEST, "failed to convert argument to JSON_C");
+      return -1;
+   }
+   json_object *jargs = (json_object *)afb_data_ro_pointer(result);
+   if (!jargs) {
+      afb_req_reply_string(req, AFB_ERRNO_INVALID_REQUEST, "failed to get pointer to argument");
+      return -1;
+   }
+   pthread_attr_t attr;
 
-                            if(pinfo_device_filter_monitoring(ctx) == PINFO_OK) {
-                                pthread_attr_init(&attr);
-                                pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
-                                if(pthread_create(&ctx->th,&attr,
-                                (void*(*)(void*))&pinfo_device_monitor_loop,(void*)ctx) == PINFO_OK) {
-                                    pinfo_api_ctx_t* api_ctx = NULL;
-                                    api_ctx = (pinfo_api_ctx_t*)afb_api_get_userdata(req->api);
-                                    AFB_REQ_DEBUG(req,"New client event-loop have been started ...");
-                                    //New client (new session) get a pointer of API context
-                                    //to access global(API) context
-                                    if(api_ctx) {
-                                        ctx->api_ctx = api_ctx;
-                                        api_ctx->client_count++;
-                                        AFB_REQ_INFO(req,"New client context allocated, client count: %d",
-                                        api_ctx->client_count);
-                                    }
-                                } else {
-                                    AFB_REQ_ERROR(req,"Failed to run the new session monitoring thread.");
-                                    pinfo_device_client_free(ctx);
-                                    ctx = NULL;
-                                }
-                                pthread_attr_destroy(&attr);
-                            } else {
-                                AFB_REQ_ERROR(req,"Failed to apply the device monitoring filters.");
-                            }
-                        } else {
-                            AFB_REQ_ERROR(req,"New client event subscribing failed.");
-                        }
-                    } else {
-                        AFB_REQ_ERROR(req,"Invalid AFB event generated for new client.");
-                    }
-                } else {
-                    AFB_REQ_ERROR(req,
-                    "Failed to generate new udev monitoring object for the new client.");
-                }
-            } else {
-                AFB_REQ_ERROR(req,
-                "Failed to generate new udev object for the new client.");
-            }
-        } else {
-            AFB_REQ_ERROR(req,"Failed to allocate memory for new client context.");
-        }
-    }
+   afb_api_t api = afb_req_get_api(req);
+   afb_api_new_event(api, "device_changed", &ctx->ev_devs_changed);
+   if (!afb_event_is_valid(ctx->ev_devs_changed)) {
+      AFB_REQ_ERROR(req, "Invalid AFB event generated for new client.");
+      return -1;
+   }
 
-    return (void*)ctx;
+   if (afb_req_subscribe(req, ctx->ev_devs_changed) != PINFO_OK) {
+      AFB_REQ_ERROR(req, "New client event subscribing failed.");
+      return -1;
+   }
+   ctx->umon_cb = (void (*)(void *, struct json_object *))pinfo_device_monitor_detect;
+   if (json_object_object_get_ex(jargs, "filter", &jval) &&
+       json_object_is_type(jval, json_type_object)) {
+      json_object_deep_copy(jval, &ctx->filter, NULL);
+   }
+
+   if (json_object_object_get_ex(jargs, "mask", &jval) &&
+       json_object_is_type(jval, json_type_object)) {
+      json_object_deep_copy(jval, &ctx->mask, NULL);
+   }
+
+   if (pinfo_device_filter_monitoring(ctx) != PINFO_OK) {
+      AFB_API_DEBUG(api, "Failed to apply the device monitoring filters.");
+      return -1;
+   }
+
+   pthread_attr_init(&attr);
+   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+   if (pthread_create(
+         &ctx->th, &attr, (void *(*)(void *)) & pinfo_device_monitor_loop, (void *)ctx) !=
+       PINFO_OK) {
+      AFB_REQ_ERROR(req, "Failed to run the new session monitoring thread.");
+      pinfo_device_client_free(ctx);
+      return -1;
+   }
+   pinfo_api_ctx_t *api_ctx = NULL;
+   api_ctx = (pinfo_api_ctx_t *)afb_api_get_userdata(api);
+   AFB_REQ_DEBUG(req, "New client event-loop have been started ...");
+
+   // New client (new session) get a pointer of API context
+   // to access global(API) context
+   if (api_ctx) {
+      ctx->api_ctx = api_ctx;
+      api_ctx->client_count++;
+      AFB_REQ_INFO(req, "New client context allocated, client count: %d", api_ctx->client_count);
+   }
+
+   pthread_attr_destroy(&attr);
+
+   if (value) {
+      *value = ctx;
+   }
+   if (free_cb) {
+      *free_cb = pinfo_device_client_free;
+      *free_closure = ctx;
+   }
+
+   return 0;
 }
 
 static void
@@ -395,106 +427,4 @@ pinfo_device_monitor_loop(pinfo_client_ctx_t* ctx) {
         }
     }
     return NULL;
-}
-
-static void
-pinfo_device_filter_scan(struct udev_enumerate* udev_enum, json_object* jfilter) {
-    if(udev_enum && jfilter) {
-        if(json_object_is_type(jfilter,json_type_object)) {
-            json_object* jval = NULL;
-
-			if(json_object_object_get_ex(jfilter,"tags",&jval)) {
-				if(json_object_is_type(jval,json_type_array)) {
-					int tag_idx = 0;
-					const int tags_count = (int) json_object_array_length(jval);
-
-					if(tags_count > 0) {
-                        json_object* jtag = NULL;
-
-                        for(jtag = json_object_array_get_idx(jval,0);
-                            jtag && tag_idx < tags_count;
-                            jtag = json_object_array_get_idx(jtag,++tag_idx)) {
-                            udev_enumerate_add_match_tag(udev_enum,json_object_get_string(jtag));
-                        }
-					} else {
-						//Empty json array for tags array
-					}
-				} else if(json_object_is_type(jval,json_type_string)) {
-					udev_enumerate_add_match_tag(udev_enum,json_object_get_string(jval));
-				} else {
-                    AFB_WARNING("Client passed invalid value for 'tags' field,\
-                    the value type should be a json array with json string items\
-                    or a json string, avoid the tags filtering");
-				}
-			}
-
-			if(json_object_object_get_ex(jfilter,"properties",&jval) &&
-            json_object_is_type(jval,json_type_object)) {
-                if(json_object_object_length(jval) > 0) {
-                    json_object_object_foreach(jval,key,value) {
-                        udev_enumerate_add_match_property(udev_enum,key,json_object_get_string(value));
-                    }
-                }
-			}
-
-			if(json_object_object_get_ex(jfilter,"attributes",&jval) &&
-            json_object_is_type(jval,json_type_object)) {
-                if(json_object_object_length(jval) > 0) {
-                    json_object_object_foreach(jval,key,value) {
-                        udev_enumerate_add_match_sysattr(udev_enum,key,json_object_get_string(value));
-                    }
-                }
-			}
-        }
-    }
-}
-
-json_object*
-pinfo_device_scan(json_object *jfilter, json_object* jmask) {
-    json_object* jdevs_arr = NULL;
-    struct udev* udev_ctx = NULL;
-
-    udev_ctx = udev_new();
-    jdevs_arr = json_object_new_array();
-
-    if(udev_ctx) {
-        struct udev_enumerate *dev_enum = NULL;
-
-        dev_enum = udev_enumerate_new(udev_ctx);
-        if(dev_enum) {
-            struct udev_list_entry *dev_elist = NULL;
-            struct udev_list_entry *dev_elist_head = NULL;
-            pinfo_device_filter_scan(dev_enum,jfilter);
-
-            udev_enumerate_scan_devices(dev_enum);
-            dev_elist = udev_enumerate_get_list_entry(dev_enum);
-            if(dev_elist) {
-                struct udev_device *udevice = NULL;
-                struct json_object *jdevice = NULL;
-                int udev_num = 0;
-                int jdev_num = 0;
-
-                udev_list_entry_foreach(dev_elist_head,dev_elist) {
-                    const char* path = udev_list_entry_get_name(dev_elist_head);
-                    udev_num++;
-                    udevice = udev_device_new_from_syspath((struct udev*)udev_ctx,path);
-                    jdevice = pinfo_device_udevice_to_jdevice(udevice,jmask);
-                    if(jdevice) {
-                        json_object_array_add(jdevs_arr,jdevice);
-                        jdev_num++;
-                    } else {
-                        udev_device_unref(udevice);
-                    }
-                }
-                AFB_INFO("[SCAN]: %d device detected, %d device info reported back.",udev_num,jdev_num);
-            } else {
-                AFB_WARNING("No device found or enumeration failed");
-            }
-        } else {
-            AFB_DEBUG("Unable to allocate enumeration object.");
-        }
-        udev_enumerate_unref(dev_enum);
-    }
-
-    return jdevs_arr;
 }

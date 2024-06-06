@@ -34,10 +34,10 @@ $ cat /etc/platform-info/os.json
 
 ### a. Run the binding
 
-To run this binding:
+To run this binding from build directory:
 
 ```bash
-afb-binder --port=8001 --name=afb-platform-info --workdir=/usr/redpesk/platform-info-binding --binding=lib/afb-platform-info.so -vvv
+SCRIPTS_PATH=../scripts/ afb-binder --binding=./platform-info-binding.so -vvv
 ```
 
 ### b. API verbs
@@ -52,7 +52,8 @@ platform-info get "os_version"
 ON-REPLY 0:platform-info/get: OK
 {
   "jtype":"afb-reply",
-  "request":{
+  "request":
+  {
     "status":"success"
   },
   "response":33
@@ -82,10 +83,12 @@ platform-info get_all_info
 ON-REPLY 0:platform-info/get_all_info: OK 
 {
   "jtype": "afb-reply",
-  "request": {
+  "request": 
+  {
     "status": "success"
   },
-  "response": {
+  "response": 
+  {
     "os_name": "Fedora",
     "os_version": 33,
     "soc_vendor": "intel",
@@ -136,6 +139,7 @@ ON-REPLY 0:platform-info/get_all_info: OK
         "afb-binding-devel.x86_64": "4.0.0beta5-33.7"
       },
 [...]
+    ]
   }
 }
 ```
