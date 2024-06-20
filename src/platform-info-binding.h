@@ -22,17 +22,26 @@
 #include <afb-helpers4/afb-req-utils.h>
 
 
-const char * all_info[11] =  {
-	"os_name",
-	"os_version",
-	"soc_vendor",
-	"soc_revision",
-	"soc_family",
-	"soc_id",
-	"cpu_count",
-	"board_model",
-	"afm_packages_installed",
-	"packages_number",
+const char * all_info[] =  {
+	"gpu_name",
+  	"soc_family",
+	"cpu_arch",
+  	"soc_name",
+  	"cpu_cache_kb",
+  	"board_model",
+  	"cpu_count",
+  	"cpu_compatibility",
+  	"memory_total_mb",
+  	"cpu_freq_mhz",
+  	"soc_id",
+  	"soc_revision",
+  	"soc_vendor",
+  	"os_version",
+  	"os_name",
+  	"ethernet_devices",
+	"bluetooth_devices",
+  	"wifi_devices",
+  	"can_devices",
 	NULL
 };
 

@@ -37,6 +37,20 @@
     #define SCRIPTS_PATH "./var"
 #endif
 
+/**
+ * Function: specialAction
+ * -----------------------
+ * 
+ * Used to run a script
+ * in case the key specified in the request
+ * isn't found in the json data file
+ * 
+ * @param req	request of the client
+ * @param input_name	string of a key in the json data
+ * @param resultJ	the json data that is returned alongside an int
+ * 
+ * @return 1 if everything is okay else 0
+*/
 static int specialAction(afb_req_t req, char * input_name, json_object *resultJ) {
 	char script_name[256], path[256], cmd[256];
     const char *scriptPathEnv = NULL;
@@ -108,14 +122,16 @@ OnErrorExit:
 
 extern const char * info_verbS;
 
-/*
+/**
  * Function: infoVerb
  * --------------------
- * 	a callback to the verb 'info'
+ * a callback to the verb 'info'
+ *
+ * @param request		Request from the client 
+ * @param argc      Arguments count
+ * @param argv      array of arguments
  * 
- * 	request: Request from the client 
- * 
- * 	returns: Void
+ * @returns: Void
  */
 void afv_info(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
     enum json_tokener_error jerr;
@@ -129,6 +145,17 @@ void afv_info(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
     return ;
 }
 
+/** Function:  afv_get
+ * ----------------------
+ * Callback for get verb.
+ * It build a json data structure of the asked hardware specification and returns it  
+ *
+ * @param request	Request from the client
+ * @param argc      Arguments count
+ * @param argv      Array of arguments
+ *
+ * @returns: nothing
+*/
 void afv_get(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
 	pinfo_api_ctx_t *api_ctx = (pinfo_api_ctx_t*)afb_api_get_userdata(afb_req_get_api(req));
 
@@ -178,6 +205,18 @@ void afv_get(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
 	}
 }
 
+
+/** Function:  afv_get_all_info
+ * ----------------------
+ * Callback for get_all_info verb.
+ * It build a json data structure of the hardware specifications and returns it  
+ *
+ * @param request	Request from the client
+ * @param argc      Arguments count
+ * @param argv      Array of arguments
+ *
+ * @returns: nothing
+*/
 void afv_get_all_info(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
 	pinfo_api_ctx_t * api_ctx = (pinfo_api_ctx_t * )afb_api_get_userdata(afb_req_get_api(req));
 	if(!api_ctx) goto NoContextError;
@@ -214,6 +253,16 @@ NoContextError:
 	
 }
 
+/** Function:  afv_set
+ * ----------------------
+ * Callback for set verb.
+ * 
+ * @param request	Request from the client
+ * @param argc      Arguments count
+ * @param argv      Array of arguments
+ *
+ * @returns: nothing
+*/
 void afv_set(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
 	json_object *platform_info = (json_object*) afb_req_get_userdata(req);
 	afb_data_t arg;
@@ -228,12 +277,11 @@ void afv_set(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
 		return;
 	}
 	
-
 #if (JSON_C_VERSION_MAJOR_VERSION == 0 && JSON_C_VERSION_MINOR_VERSION >= 13)
 	if(json_object_object_add(platform_info, HOTPLUG_NS, args)) {
 		afb_req_fail(req, "Addition fails", NULL);
 		return;
-	}
+	} 
 #else
 	json_object_object_add(platform_info, HOTPLUG_NS, json_request);
 #endif
@@ -241,6 +289,13 @@ void afv_set(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
 	afb_req_reply(req, 0, 1, argv);
 }
 
+/** Function: check_subscribe_unsubscribe_arguments
+ * Check if the event it's subscribing to is well created
+ * 
+ * @param req 	The request of the client 		
+ *
+ * @return: True if everything is okay, else false 
+*/
 static bool check_subscribe_unsubcribe_argument(afb_req_t req) {
     afb_data_t result;
     if (afb_req_param_convert(req, 0, AFB_PREDEFINED_TYPE_JSON_C, &result) < 0) {
@@ -270,6 +325,18 @@ static bool check_subscribe_unsubcribe_argument(afb_req_t req) {
     return true;
 }
 
+
+/** Function:  Unsubscribe
+* ----------------------
+* Callback for "unsubscribe" verb.
+* Unsubscribe a client to a dynamic event.
+*
+* @param request	Request from the client
+* @param argc      Arguments count
+* @param argv      Array of arguments
+*
+* @returns: nothing
+*/
 void afv_unsubscribe(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
    if (!check_subscribe_unsubcribe_argument(req)) {
       return;
@@ -291,6 +358,19 @@ void afv_unsubscribe(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
    }
 }
 
+/** Function:  Subscribe
+* --------------------
+* Callback for "subscribe" verb.
+* Subscribe a client to a dynamic event.
+* Create the asked event if not found in the event list.
+* Events are Udev's event 
+*
+* @param request	Request from the client
+* @param argc      Arguments count
+* @param argv      Array of arguments
+*
+* @returns: nothing
+*/
 void afv_subscribe(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
    if (!check_subscribe_unsubcribe_argument(req)) {
       return;
@@ -309,6 +389,16 @@ void afv_subscribe(afb_req_t req, unsigned argc, afb_data_t const argv[]) {
    afb_req_reply(req, 0, 1, argv);
 }
 
+/**
+ * Function: afv_static_info
+ * -------------------------
+ * Used to fetch the static data of the board when starting the binder
+ * 
+ * @param api	the api to expose the return
+ * @param dir	the directory of where to fetch hardware's data
+ * 
+ * @return a Json object containing the data of the hardware that is exposed on the api
+*/
 static json_object * afv_static_info(afb_api_t api, const char * dir) {
 	struct dirent* dir_ent = NULL;
 	json_object* static_info = NULL;
@@ -365,6 +455,13 @@ static const struct afb_auth _afb_auths_platform_info[] = {
     { .type = afb_auth_Permission, .text = "urn:AGL:permission::platform:info:set" }
 };
 
+/**
+* Binding CallBack
+* @param api the api that receive the CallBack
+* @param ctlid     identifier of the reason of the call (@see afb_ctlid)
+* @param ctlarg    data associated to the call
+* @param userdata  the userdata of the api (@see afb_api_get_userdata)
+*/
 int binding_ctl(afb_api_t api, afb_ctlid_t ctlid, afb_ctlarg_t ctlarg, void *userdata) {
     switch(ctlid) {
         case afb_ctlid_Init:

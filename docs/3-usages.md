@@ -10,8 +10,6 @@
 sudo systemctl start platform-core-detection
 ```
 
-Result:
-
 ```bash
 $ cat /etc/platform-info/core.json 
 {"soc_id":"i7-8550U","gpu_name":"","memory_total_mb":970,"cpu_freq_mhz":"","soc_family":"","soc_revision":10,"cpu_count":1,"cpu_cache_kb":8480,"cpu_arch":"x86_64","board_model":"unknown","cpu_compatibility":"unknown","soc_name":"Intel i7-8550U","soc_vendor":"intel"}
@@ -23,11 +21,9 @@ $ cat /etc/platform-info/core.json
 sudo systemctl start platform-os-detection
 ```
 
-Result:
-
 ```bash
 $ cat /etc/platform-info/os.json 
-{"os_name":"Fedora","os_version":33}
+{"os_name":"Fedora","os_version":40}
 ```
 
 ## II - Usage of the API verbs
@@ -40,6 +36,14 @@ To run this binding from build directory:
 SCRIPTS_PATH=../scripts/ afb-binder --binding=./platform-info-binding.so -vvv
 ```
 
+#### Start the web client
+
+After starting the binder start the web client in a new tab with:
+
+```bash
+afb-client ws://localhost:8001/api
+```
+
 ### b. API verbs
 
 #### get
@@ -47,99 +51,104 @@ SCRIPTS_PATH=../scripts/ afb-binder --binding=./platform-info-binding.so -vvv
 This API has a verb called *'get'*. At this verb you will want to add your specific information requests. For example if you need to know the os version:
 
 ```bash
-afb-client ws://localhost:8001/api 
 platform-info get "os_version"
-ON-REPLY 0:platform-info/get: OK
-{
-  "jtype":"afb-reply",
-  "request":
-  {
-    "status":"success"
-  },
-  "response":33
-}
+```
+
+Respond:
+
+```json
+{"jtype":"afb-reply","request":{"status":"success","code":0},"response":"40 (Workstation Edition)"}
 ```
 
 Here is a list of what you can ask:
 
-* "os_name"
-* "os_version"
-* "soc_vendor"
-* "soc_family"
-* "soc_id"
-* "cpu_count"
-* "board_model"
-* "packages_afm_installed"
-* "packages_number"
-* "packages_installed"
+* "gpu_name",
+* "soc_family",
+* "cpu_arch",
+* "soc_name",
+* "cpu_cache_kb",
+* "board_model",
+* "cpu_count",
+* "cpu_compatibility",
+* "memory_total_mb",
+* "cpu_freq_mhz",
+* "soc_id",
+* "soc_revision",
+* "soc_vendor",
+* "os_version",
+* "os_name",
+* "ethernet_devices",
+* "bluetooth_devices",
+* "wifi_devices",
+* "can_devices",
 
 #### get_all_info
 
-And you have a verb called *'get_all_info'* that returns a set of useful system information:
+You have a verb called *'get_all_info'* that returns a set of useful system information:
 
 ```bash
-afb-client ws://localhost:8001/api
+platform-info get_all_info
+```
+
+Respond:
+
+```json
 platform-info get_all_info 
-ON-REPLY 0:platform-info/get_all_info: OK 
-{
-  "jtype": "afb-reply",
-  "request": 
-  {
-    "status": "success"
-  },
-  "response": 
-  {
-    "os_name": "Fedora",
-    "os_version": 33,
-    "soc_vendor": "intel",
-    "soc_revision": 10,
-    "soc_family": "",
-    "soc_id": "i7-8550U",
-    "cpu_count": 1,
-    "board_model": "unknown",
-    "afm_packages_installed": [
-      {
-        "canbus-binding": "9.99.1+20201222+6+g2a919fc-29.23"
-      },
-      {
-        "canopen-binding": "1.1.0+20201215+1+gab54d92-12.37"
-      },
-      {
-        "platform-info-binding": "1.1.0-10.1"
-      },
-      {
-        "redis-tsdb-binding": "1.0.1-21.8"
-      },
-      {
-        "signal-composer-binding": "10.0.4-37.30"
-      },
-      {
-        "spawn-binding": "0.0.0+20210126+164049+0+g4abfbbbe-16.23"
-      }
-    ],
-    "packages_number": [
-      {
-        "numbers": 672
-      }
-    ],
-    "packages_installed": [
-      {
-        "NetworkManager.x86_64": "1:1.26.6-1.fc33"
-      },
-      {
-        "NetworkManager-libnm.x86_64": "1:1.26.6-1.fc33"
-      },
-      {
-        "acl.x86_64": "2.2.53-9.fc33"
-      },
-      {
-        "afb-binder.x86_64": "4.0.0beta5-29.2"
-      },
-      {
-        "afb-binding-devel.x86_64": "4.0.0beta5-33.7"
-      },
-[...]
-    ]
-  }
+{"jtype":"afb-reply",
+"request":{"status":"success","code":0},
+  "response":{
+              "gpu_name":"Lenovo Device 225d",
+              "soc_family":"Core i7",
+              "cpu_arch":"unknown",
+              "soc_name":"Intel Core i7 i7-8550U",
+              "cpu_cache_kb":10496,
+              "board_model":"unknown",
+              "cpu_count":8,
+              "cpu_compatibility":"unknown",
+              "memory_total_mb":15748,
+              "cpu_freq_mhz":2000,
+              "soc_id":"i7-8550U",
+              "soc_revision":10,
+              "soc_vendor":"intel",
+              "os_version":"40 (Workstation Edition)",
+              "os_name":"Fedora Linux",
+              "ethernet_devices":"enp0s20f0u2u4u4 enp0s31f6",
+              "bluetooth_devices":"",
+              "wifi_devices":"wlp3s0",
+              "can_devices":""
+            }
 }
+```
+
+#### subscribe
+
+You have a subscribe verb which will allow you to detect and get information when a new device is plugged in.
+You can add filter to the json object of your request to specify which filter you want.
+
+```bash
+platform-info subscribe
+```
+
+```json
+platform-info subscribe {"event":"monitor-devices"}
+                        {"event":"monitor-devices","filter":"properties"}
+                        {"event":"monitor-devices","filter":"SUBSYSTEM"}
+                        {"event":"monitor-devices","filter":"DEVTYPE"}
+                        {"event":"monitor-devices","filter":"tags"}
+```
+
+#### unsubscribe
+
+Allow you to unsubscribe from an event
+
+```bash
+platform-info unsubscribe
+```
+
+```json
+platform-info subscribe {"event":"monitor-devices"}
+                        {"event":"monitor-devices","filter":"properties"}
+                        {"event":"monitor-devices","filter":"SUBSYSTEM"}
+                        {"event":"monitor-devices","filter":"DEVTYPE"}
+                        {"event":"monitor-devices","filter":"tags"}
 ```
