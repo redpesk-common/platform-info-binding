@@ -22,31 +22,32 @@
 #include <afb/afb-binding.h>
 #include "json-c/json.h"
 
-#define PINFO_OK               (0)
-#define PINFO_ERR              (-1)
+#define PINFO_OK  (0)
+#define PINFO_ERR (-1)
 
 struct udev;
 struct udev_monitor;
 struct pthread_t;
 
-typedef struct {
-    struct json_object* info;
+typedef struct
+{
+    struct json_object *info;
     int client_count;
-}pinfo_api_ctx_t;
+} pinfo_api_ctx_t;
 
-typedef struct {
+typedef struct
+{
     struct udev *udev_ctx;
     struct udev_monitor *umon_hndl;
     struct json_object *filter;
     struct json_object *mask;
     pinfo_api_ctx_t *api_ctx;
-    void(*umon_cb)(void* client_ctx, struct json_object* jdevice);
+    void (*umon_cb)(void *client_ctx, struct json_object *jdevice);
     pthread_t th;
     afb_event_t ev_devs_changed;
-}pinfo_client_ctx_t;
+} pinfo_client_ctx_t;
 
-
-int                 pinfo_device_monitor(afb_req_t req);
-struct json_object* pinfo_device_scan(json_object *jfilter, json_object* jmask);
+int pinfo_device_monitor(afb_req_t req);
+struct json_object *pinfo_device_scan(json_object *jfilter, json_object *jmask);
 
 #endif

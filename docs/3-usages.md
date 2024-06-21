@@ -122,8 +122,8 @@ platform-info get_all_info
 
 #### subscribe
 
-You have a subscribe verb which will allow you to detect and get information when a new device is plugged in.
-You can add filter to the json object of your request to specify which filter you want.
+The `subscribe` verb will allow you to detect and get information when an `udev` event is emitted (e.g. when a new USB device is plugged in).
+You can add a filter on events you want to register to, by specifying which `udev` SUBSYSTEM or DEVTYPE.
 
 ```bash
 platform-info subscribe
@@ -139,7 +139,7 @@ platform-info subscribe {"event":"monitor-devices"}
 
 #### unsubscribe
 
-Allow you to unsubscribe from an event
+Allows you to unsubscribe from an event
 
 ```bash
 platform-info unsubscribe

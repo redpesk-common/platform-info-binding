@@ -17,11 +17,11 @@
  */
 
 #define AFB_BINDING_VERSION 4
+#include <afb-helpers4/afb-req-utils.h>
 #include <afb/afb-binding.h>
 #include <rp-utils/rp-jsonc.h>
-#include <afb-helpers4/afb-req-utils.h>
 
-
+// clang-format off
 const char * all_info[] =  {
 	"gpu_name",
   	"soc_family",
@@ -44,10 +44,12 @@ const char * all_info[] =  {
   	"can_devices",
 	NULL
 };
+// clang-format on
 
-struct key_search_t {
-	afb_api_t api;
-	json_object **result;
+struct key_search_t
+{
+    afb_api_t api;
+    json_object **result;
 };
 
 json_object *platform_info;

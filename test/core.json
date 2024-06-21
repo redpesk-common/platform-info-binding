@@ -1,1 +1,0 @@
-{"gpu_name":"imx8mn-gpufsl","soc_family":"Freescale i.MX","cpu_arch":"aarch64","soc_name":"NXP i.MX8MNano DDR4 SolidRun board","cpu_cache_kb":"unknown","board_model":"imx8mn-solidrunfsl","cpu_count":1,"cpu_compatibility":"cortex-a53","memory_total_mb":977,"cpu_freq_mhz":1500,"soc_id":"i.MX8MN","soc_revision":1.0,"soc_vendor":"solidrun"}
