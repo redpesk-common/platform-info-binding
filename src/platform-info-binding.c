@@ -375,7 +375,7 @@ void afv_unsubscribe(afb_req_t req, unsigned argc, afb_data_t const argv[])
     else {
         // release the context
         afb_req_context_drop(req);
-        afb_req_reply(req, 0, 1, argv);
+        afb_req_reply(req, 0, 0, NULL);
     }
 }
 
@@ -408,7 +408,7 @@ void afv_subscribe(afb_req_t req, unsigned argc, afb_data_t const argv[])
         afb_req_reply_string(req, AFB_ERRNO_INVALID_REQUEST, "Unable to create new context");
     }
 
-    afb_req_reply(req, 0, 1, argv);
+    afb_req_reply(req, 0, 0, NULL);
 }
 
 /**

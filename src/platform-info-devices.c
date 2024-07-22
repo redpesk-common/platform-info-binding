@@ -294,8 +294,8 @@ static int pinfo_device_filter_monitoring(pinfo_client_ctx_t *ctx)
                         }
                         else {
                             AFB_WARNING(
-                                "Client passed invalid tag type,\
-                            avoid the tag expression");
+                                "Client passed invalid tag type, "
+                                "avoid the tag expression");
                         }
                     }
                 }
@@ -305,9 +305,9 @@ static int pinfo_device_filter_monitoring(pinfo_client_ctx_t *ctx)
             }
             else {
                 AFB_WARNING(
-                    "Client passed invalid value for 'tags' field,\
-               the value type should be a json array with json string items,\
-               avoid the tags filtering");
+                    "Client passed invalid value for 'tags' field, "
+                    "the value type should be a json array with json string items, "
+                    "avoid the tags filtering");
             }
         }
     }
@@ -406,7 +406,8 @@ static json_object *pinfo_device_udevice_to_jlist_mask(
  * convert a udevice properties (signaled by a udev event)
  * to a json object
  * @param udevice   pointer to udev device
- * @param jmask     list of requested properties
+ * @param jmask     requested properties/attributes: "mask":{"properties":["prop1","prop2"],
+ * "attributes":["attr1","attr2"]}
  *
  * @return a json object based on the udevice's data
  * {"properties": {"propname":"propvalue", ...}, "attributes":{"attrname":"attrvalue", ...}}
