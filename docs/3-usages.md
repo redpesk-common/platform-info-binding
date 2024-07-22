@@ -96,8 +96,7 @@ Respond:
 platform-info get_all_info 
 {"jtype":"afb-reply",
 "request":{"status":"success","code":0},
-  "response":{
-              "gpu_name":"Lenovo Device 225d",
+  "response":{"gpu_name":"Lenovo Device 225d",
               "soc_family":"Core i7",
               "cpu_arch":"unknown",
               "soc_name":"Intel Core i7 i7-8550U",
@@ -123,32 +122,32 @@ platform-info get_all_info
 #### subscribe
 
 The `subscribe` verb will allow you to detect and get information when an `udev` event is emitted (e.g. when a new USB device is plugged in).
-You can add a filter on events you want to register to, by specifying which `udev` SUBSYSTEM or DEVTYPE.
+You can add a filter on events you want to register to, by specifying which `udev` SUBSYSTEM, DEVTYPE or TAGS (TAGS are added by udev rules created by the user so if you didn't made any there will only be a few defaults tags).
 
 ```bash
-platform-info subscribe
+platform-info subscribe {content of request listed below}
 ```
 
 ```json
 platform-info subscribe {"event":"monitor-devices"}
-                        {"event":"monitor-devices","filter":"properties"}
-                        {"event":"monitor-devices","filter":"SUBSYSTEM"}
-                        {"event":"monitor-devices","filter":"DEVTYPE"}
+                        {"event":"monitor-devices","filter": {"properties": {"SUBSYSTEM": "input"}}}
+                        {"event":"monitor-devices","filter": {"properties": {"SUBSYSTEM": "disk", "DEVTYPE": "disk"}}}
                         {"event":"monitor-devices","filter":"tags"}
+                        {"event":"monitor-devices","mask":{"properties":["properties1", "properties2", "properties3"], "attributes":["attributes1", "attributes2"]}}
 ```
 
 #### unsubscribe
 
-Allows you to unsubscribe from an event
+Allows you to `unsubscribe` from an event
 
 ```bash
-platform-info unsubscribe
+platform-info unsubscribe {same request as the one you subscribed to}
 ```
 
 ```json
-platform-info subscribe {"event":"monitor-devices"}
-                        {"event":"monitor-devices","filter":"properties"}
-                        {"event":"monitor-devices","filter":"SUBSYSTEM"}
-                        {"event":"monitor-devices","filter":"DEVTYPE"}
-                        {"event":"monitor-devices","filter":"tags"}
+platform-info unsubscribe {"event":"monitor-devices"}
+                          {"event":"monitor-devices","filter": {"properties": {"SUBSYSTEM": "input"}}}
+                          {"event":"monitor-devices","filter": {"properties": {"DEVTYPE": "mydevtype"}}}
+                          {"event":"monitor-devices","filter":"tags"}
+                          {"event":"monitor-devices","mask":{"properties":["properties1", "properties2", "properties3"], "attributes":["attributes1", "attributes2"]}}
 ```

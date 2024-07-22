@@ -5,6 +5,9 @@ nbproject/private
 .*.sw*
 *.tar.gz
 .vscode
+.clang-format
+json
+libevdev
 __*
 !test/afb-test/fixtures/build.json
 autobuild*

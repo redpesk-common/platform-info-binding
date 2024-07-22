@@ -1,0 +1,15 @@
+{
+    "gpu_name":"gpu",
+    "soc_family":"cpu range",
+    "cpu_arch":"x86",
+    "soc_name":"cpu name",
+    "cpu_cache_kb":16384,
+    "board_model":"motherboard",
+    "cpu_count":8,
+    "cpu_compatibility":"maybe",
+    "memory_total_mb":16384,
+    "cpu_freq_mhz":2000,
+    "soc_id":"cpu model",
+    "soc_revision":10,
+    "soc_vendor":"intel or amd"
+}

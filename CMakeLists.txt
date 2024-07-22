@@ -27,6 +27,8 @@ set(APP_DIR ${AFM_APP_DIR}/${PROJECT_NAME})
 # getting scripts
 set(SCRIPTS_PATH "${APP_DIR}/var" CACHE STRING "SCRIPTS_PATH")
 
+configure_file(scripts/afm_packages_installed.sh.in ${CMAKE_CURRENT_BINARY_DIR}/scripts/afm_packages_installed.sh @ONLY)
+
 # Add generated file
 set(JSON_INFO_C ${CMAKE_CURRENT_BINARY_DIR}/json_info.c)
 
@@ -61,3 +63,9 @@ add_custom_command(
 # Install
 install(TARGETS ${TARGET_NAME} DESTINATION ${APP_DIR}/lib)
 install(FILES manifest.yml DESTINATION ${APP_DIR}/.rpconfig)
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/scripts/afm_packages_installed.sh 
+    ${CMAKE_CURRENT_SOURCE_DIR}/scripts/packages_installed.sh 
+    ${CMAKE_CURRENT_SOURCE_DIR}/scripts/packages_number.sh
+    DESTINATION ${APP_DIR}/var
+)
