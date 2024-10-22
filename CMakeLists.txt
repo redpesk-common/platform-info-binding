@@ -40,6 +40,7 @@ include(FindPkgConfig)
 pkg_check_modules(deps REQUIRED
     afb-binding
     afb-helpers4
+    librp-utils-json-c
     libudev
 )
 
@@ -49,7 +50,9 @@ set_target_properties(${TARGET_NAME} PROPERTIES
     LABELS "BINDING"
     OUTPUT_NAME ${TARGET_NAME}
 )
-target_link_libraries(${TARGET_NAME} PRIVATE ${deps_LINK_LIBRARIES})
+target_include_directories(${TARGET_NAME} PRIVATE ${deps_INCLUDE_DIRS})
+target_compile_options(${TARGET_NAME} PRIVATE ${deps_CFLAGS})
+target_link_options(${TARGET_NAME} PRIVATE ${deps_LDFLAGS})
 
 # Generate c file for the info verb
 add_custom_command(
