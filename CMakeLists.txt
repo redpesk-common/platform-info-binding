@@ -15,7 +15,7 @@
 ###########################################################################
 
 cmake_minimum_required(VERSION 3.12)
-project(platform-info-binding VERSION 9.0.1 LANGUAGES C)
+project(platform-info-binding VERSION 9.0.2 LANGUAGES C)
 
 # Add target to project dependency list
 set(TARGET_NAME platform-info-binding)
