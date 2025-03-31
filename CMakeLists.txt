@@ -44,6 +44,8 @@ pkg_check_modules(deps REQUIRED
     libudev
 )
 
+include(FindThreads)
+
 # Binder exposes a unique public entry point
 set_target_properties(${TARGET_NAME} PROPERTIES
     PREFIX ""
@@ -53,7 +55,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 target_include_directories(${TARGET_NAME} PRIVATE ${deps_INCLUDE_DIRS})
 target_compile_options(${TARGET_NAME} PRIVATE ${deps_CFLAGS})
 target_link_options(${TARGET_NAME} PRIVATE ${deps_LDFLAGS})
-target_link_libraries(${TARGET_NAME} PRIVATE ${deps_LIBRARIES})
+target_link_libraries(${TARGET_NAME} PRIVATE ${deps_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 # Generate c file for the info verb
 add_custom_command(
