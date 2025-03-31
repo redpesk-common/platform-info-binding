@@ -53,6 +53,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 target_include_directories(${TARGET_NAME} PRIVATE ${deps_INCLUDE_DIRS})
 target_compile_options(${TARGET_NAME} PRIVATE ${deps_CFLAGS})
 target_link_options(${TARGET_NAME} PRIVATE ${deps_LDFLAGS})
+target_link_libraries(${TARGET_NAME} PRIVATE ${deps_LIBRARIES})
 
 # Generate c file for the info verb
 add_custom_command(
