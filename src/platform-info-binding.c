@@ -488,10 +488,10 @@ static const struct afb_auth _afb_auths_platform_info[] = {
  */
 int binding_ctl(afb_api_t api, afb_ctlid_t ctlid, afb_ctlarg_t ctlarg, void *userdata)
 {
+    pinfo_api_ctx_t *api_ctx = NULL;
+    int ret = PINFO_OK;
     switch (ctlid) {
     case afb_ctlid_Init:
-        pinfo_api_ctx_t *api_ctx = NULL;
-        int ret = PINFO_OK;
         api_ctx = malloc(sizeof(*api_ctx));
         if (api_ctx) {
             api_ctx->info = afv_static_info(api, PLATFORM_INFO_DIR);

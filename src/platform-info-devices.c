@@ -40,7 +40,6 @@ static json_object *pinfo_device_udevice_to_jdevice(struct udev_device *udevice,
                                                     struct json_object *jmask);
 static void pinfo_device_jdev_destructor(json_object *jdevice, void *udevice);
 static int pinfo_device_filter_monitoring(pinfo_client_ctx_t *ctx);
-static void pinfo_device_filter_scan(struct udev_enumerate *udev_enum, struct json_object *jfilter);
 static json_object *pinfo_device_udevice_to_jlist(
     struct udev_device *udevice,
     struct udev_list_entry *(*udevice_elist)(struct udev_device *),
