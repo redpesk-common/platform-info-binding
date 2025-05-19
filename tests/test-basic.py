@@ -12,63 +12,46 @@ def setUpModule():
 
 
 class TestBasicsVerbs(AFBTestCase):
+    
+    "Test get verb"
 
     def test_get(self):
 
-        core_dict = {
-            "gpu_name": "gpu",
-            "soc_family": "cpu range",
-            "cpu_arch": "x86",
-            "soc_name": "cpu name",
-            "cpu_cache_kb": 16384,
-            "board_model": "motherboard",
-            "cpu_count": 8,
-            "cpu_compatibility": "maybe",
-            "memory_total_mb": 16384,
-            "cpu_freq_mhz": 2000,
-            "soc_id": "cpu model",
-            "soc_revision": 10,
-            "soc_vendor": "intel or amd",
-        }
+        with open('/etc/platform-info/core.json', 'r') as f:
+            core_dict = json.load(f)
 
         for key in core_dict:
             r = libafb.callsync(self.binder, "platform-info", "get", key)
             assert r.status == 0
             assert r.args[0] == core_dict[key]
-
-        os_dict = {"os_name": "fedora", "os_version": "40"}
+        
+        with open('/etc/platform-info/os.json', 'r') as f:
+            os_dict = json.load(f)
 
         for key in os_dict.keys():
             r = libafb.callsync(self.binder, "platform-info", "get", key)
             assert r.status == 0
             assert r.args[0] == os_dict[key]
+            
+    "Test get verb fail"
 
-        r = libafb.callsync(self.binder, "platform-info", "get", "not_existing")
-        assert r.status == 0
-        assert r.args[0] == []
+    def test_get_fail(self):
+        try:
+            r = libafb.callsync(self.binder, "platform-info", "get", "no_existing")
+            assert False
+        except RuntimeError as e:
+            assert str(e) == "invalid-request"
+
+        
+    "Test get_all_info verb"    
 
     def test_getall(self):
-        dicto = {
-            "gpu_name": "gpu",
-            "soc_family": "cpu range",
-            "cpu_arch": "x86",
-            "soc_name": "cpu name",
-            "cpu_cache_kb": 16384,
-            "board_model": "motherboard",
-            "cpu_count": 8,
-            "cpu_compatibility": "maybe",
-            "memory_total_mb": 16384,
-            "cpu_freq_mhz": 2000,
-            "soc_id": "cpu model",
-            "soc_revision": 10,
-            "soc_vendor": "intel or amd",
-            "os_version": "40",
-            "os_name": "fedora",
-            "ethernet_devices": [],
-            "bluetooth_devices": [],
-            "wifi_devices": [],
-            "can_devices": [],
-        }
+        dicto = {}
+        
+        for path in ["/etc/platform-info/core.json", "/etc/platform-info/os.json", "/etc/platform-info/devices.json"]:
+            with open(path, "r") as f:
+                data = json.load(f)
+                dicto.update(data)
 
         r = libafb.callsync(self.binder, "platform-info", "get_all_info")
         assert r.status == 0

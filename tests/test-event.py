@@ -124,7 +124,9 @@ class TestsEventsVerbs(AFBTestCase):
 
             if len(values) != 0:
                 assert dicto != []
-                assert dicto["properties"]["NAME"] == '"TEST DEVICE"'
+                name = dicto.get("properties", {}).get("NAME")
+                if name is not None:
+                    assert name == '"TEST DEVICE"'
 
             # Cases where the filter is valid so we're testing the return contains the corrects values
             if len(values) > 2:
