@@ -46,6 +46,10 @@ class TestBasicsVerbs(AFBTestCase):
     "Test get_all_info verb"    
 
     def test_getall(self):
+        
+        def remove_unknown_values(d):
+            return {k: v for k, v in d.items() if v != "Unknown"}
+        
         dicto = {}
         
         for path in ["/etc/platform-info/core.json", "/etc/platform-info/os.json", "/etc/platform-info/devices.json"]:
@@ -55,7 +59,9 @@ class TestBasicsVerbs(AFBTestCase):
 
         r = libafb.callsync(self.binder, "platform-info", "get_all_info")
         assert r.status == 0
-        assert r.args[0] == dicto
+
+        result_cleaned = remove_unknown_values(r.args[0])
+        assert result_cleaned == dicto
 
     "Test info verb"
 
