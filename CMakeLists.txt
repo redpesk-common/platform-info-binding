@@ -75,3 +75,9 @@ install(
     ${CMAKE_CURRENT_SOURCE_DIR}/scripts/packages_number.sh
     DESTINATION ${APP_DIR}/var
 )
+install(PROGRAMS ${CMAKE_SOURCE_DIR}/redtest/run-redtest
+	DESTINATION /usr/libexec/redtest/${PROJECT_NAME}/)
+install(FILES ${CMAKE_SOURCE_DIR}/tests/test-basic.py
+    DESTINATION /usr/libexec/redtest/${PROJECT_NAME}/)
+install(FILES ${CMAKE_SOURCE_DIR}/tests/test-event.py
+    DESTINATION /usr/libexec/redtest/${PROJECT_NAME}/)

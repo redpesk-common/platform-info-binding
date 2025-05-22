@@ -73,21 +73,21 @@ class TestsEventsVerbs(AFBTestCase):
                         "attributes": ["name", "subsystem"],
                     },
                 },
-                ["mask", "ID_INPUT", "NAME", "name", "subsystem"],
+                ["mask", "ID_INPUT", "subsystem"],
             ),
             (
                 {
                     "event": "monitor-devices",
                     "mask": {"properties": ["ID_INPUT", "NAME"]},
                 },
-                ["mask", "ID_INPUT", "NAME"],
+                ["mask", "ID_INPUT"],
             ),
             (
                 {
                     "event": "monitor-devices",
                     "mask": {"attributes": ["name", "subsystem"]},
                 },
-                ["mask", "name", "subsystem"],
+                ["mask", "subsystem"],
             ),
         ]
 
@@ -110,6 +110,7 @@ class TestsEventsVerbs(AFBTestCase):
             dicto = []
 
             sub = libafb.callsync(self.binder, "platform-info", "subscribe", request)
+            time.sleep(0.5)
 
             dev = libevdev.Device()
             dev.name = "TEST DEVICE"

@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# When this script will be run, the packages your-application.rpm and your-application-redtest.rpm
+# would have been installed on the target
+
+PACKAGE_NAME="platform-info-binding"
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Install or reinstall dependencies
+for p in  afb-libpython afb-test-py python3-pip afb-cmake-modules librp-utils-json-c-devel libevdev afb-helpers4 gcc g++ make cmake json-c afb-binding libmicrohttpd libdb-devel platform-runtime-tools; do
+    sudo rpm -q $p && sudo dnf update -y $p || sudo dnf install -y $p 
+done
+
+sudo pip3 install libevdev
+
+# Install missing tools if needed
+for p in g++ lcov; do
+    command -v $p 2>/dev/null 2>&1 || sudo dnf install -y $p
+done
+
+# Create the directory where the logs need to be
+mkdir -p /var/log/redtest/${PACKAGE_NAME}
+
+# Run your tests
+# To be filled by you! Remember, the log file needs to be in ".tap" format
+
+sudo systemctl start platform-core-detection
+sudo systemctl start platform-os-detection
+sudo systemctl start platform-devices-detection
+
+echo "--- Start test-basic python platform-info binding ---"
+LD_LIBRARY_PATH=/usr/redpesk/${PACKAGE_NAME}/lib python ${SCRIPT_DIR}/test-basic.py --tap | tee /var/log/redtest/${PACKAGE_NAME}/tests.tap 2>&1
+
+
+sudo chmod 0666 /dev/uinput
+sudo chown root:input /dev/uinput
+sudo systemctl restart systemd-udevd
+
+echo "--- Start test-event python platform-info binding ---"
+LD_LIBRARY_PATH=/usr/redpesk/${PACKAGE_NAME}/lib python ${SCRIPT_DIR}/test-event.py --tap | tee /var/log/redtest/${PACKAGE_NAME}/tests.tap 2>&1
+
+
+
