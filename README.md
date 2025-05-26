@@ -1,3 +1,5 @@
+[![Pipeline Status](https://git.ovh.iot/redpesk/redpesk-common/platform-info-binding/badges/master/pipeline.svg)](https://git.ovh.iot/redpesk/redpesk-common/platform-info-binding/-/pipelines)
+
 # platform-info-binding
 
 ![architecture](./docs/img/architecture_platform-info-binding.png)
