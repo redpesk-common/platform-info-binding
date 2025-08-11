@@ -15,7 +15,12 @@
 ###########################################################################
 
 cmake_minimum_required(VERSION 3.12)
-project(platform-info-binding VERSION 9.0.2 LANGUAGES C)
+project(platform-info-binding
+	VERSION 9.0.2
+	DESCRIPTION "A binding meant to provide system, platform, build information for others bindings and apps"
+	HOMEPAGE_URL "https://github.com/redpesk-common/platform-info-binding"
+	LANGUAGES C)
+set(PROJECT_LICENSE Apache-2.0)
 
 # Add target to project dependency list
 set(TARGET_NAME platform-info-binding)
@@ -28,6 +33,7 @@ set(APP_DIR ${AFM_APP_DIR}/${PROJECT_NAME})
 set(SCRIPTS_PATH "${APP_DIR}/var" CACHE STRING "SCRIPTS_PATH")
 
 configure_file(scripts/afm_packages_installed.sh.in ${CMAKE_CURRENT_BINARY_DIR}/scripts/afm_packages_installed.sh @ONLY)
+configure_file(manifest.yml.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.yml @ONLY)
 
 # Add generated file
 set(JSON_INFO_C ${CMAKE_CURRENT_BINARY_DIR}/json_info.c)
@@ -47,11 +53,7 @@ pkg_check_modules(deps REQUIRED
 include(FindThreads)
 
 # Binder exposes a unique public entry point
-set_target_properties(${TARGET_NAME} PROPERTIES
-    PREFIX ""
-    LABELS "BINDING"
-    OUTPUT_NAME ${TARGET_NAME}
-)
+set_target_properties(${TARGET_NAME} PROPERTIES PREFIX "")
 target_include_directories(${TARGET_NAME} PRIVATE ${deps_INCLUDE_DIRS})
 target_compile_options(${TARGET_NAME} PRIVATE ${deps_CFLAGS})
 target_link_options(${TARGET_NAME} PRIVATE ${deps_LDFLAGS})
@@ -68,7 +70,7 @@ add_custom_command(
 
 # Install
 install(TARGETS ${TARGET_NAME} DESTINATION ${APP_DIR}/lib)
-install(FILES manifest.yml DESTINATION ${APP_DIR}/.rpconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.yml DESTINATION ${APP_DIR}/.rpconfig)
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/scripts/afm_packages_installed.sh 
     ${CMAKE_CURRENT_SOURCE_DIR}/scripts/packages_installed.sh 

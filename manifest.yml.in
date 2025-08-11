@@ -1,0 +1,23 @@
+rp-manifest: 1
+id: @PROJECT_NAME@
+version: @PROJECT_VERSION@
+name: @PROJECT_NAME@
+description: @PROJECT_DESCRIPTION@
+author: IoT.bzh developer team <dev-team@iot.bzh>
+license: @PROJECT_LICENSE@
+required-permission:
+  - urn:AGL:permission::partner:scope-platform
+  - urn:AGL:permission::public:hidden
+  - urn:AGL:permission::system:run-by-default
+  - urn:AGL:permission::public:no-htdocs
+targets:
+  - target: main
+    content:
+      src: lib/@TARGET_NAME@.so
+      type: application/vnd.agl.service
+    provided-api:
+      - name: platform-info
+        value: ws
+    required-binding:
+      - name: lib/@TARGET_NAME@.so
+        value: local
